@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCP API Keys Configuration - AirAsia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #ffffff;
+            color: #333;
+            padding: 35px 40px 30px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo {
+            max-width: 140px;
+            height: auto;
+            margin-bottom: 18px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .endpoint-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .endpoint-box strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #1976d2;
+            font-size: 1.1rem;
+        }
+
+        .endpoint-url {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .screenshot-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .screenshot {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .screenshot-caption {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .steps-title {
+            font-size: 1.5rem;
+            color: #FF0000;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .step {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #fafafa;
+            border-radius: 8px;
+            border-left: 4px solid #FF0000;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .step-number {
+            background: #FF0000;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .step-content {
+            font-size: 1rem;
+            color: #444;
+            line-height: 1.8;
+        }
+
+        .step-content ul {
+            margin: 15px 0 0 20px;
+        }
+
+        .step-content li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #FF0000;
+            font-weight: 600;
+        }
+
+        .note {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+            font-size: 0.95rem;
+        }
+
+        .note strong {
+            color: #856404;
+        }
+
+        .footer {
+            background: #f5f5f5;
+            padding: 25px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .footer strong {
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .step {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="https://i.imgur.com/tvZMJ0I.png" alt="AirAsia Logo" class="logo">
+            <h1>GCP API Keys Configuration</h1>
+            <p>RMX SSO Production Setup Guide</p>
+        </header>
+
+        <div class="content">
+            <!-- Endpoint Information -->
+            <div class="endpoint-box">
+                <strong>🔗 Configuration Endpoint</strong>
+                <div class="endpoint-url">https://idp.stg.travelx.io/realms/console/broker/airasia-google/endpoint</div>
+            </div>
+
+            <!-- Screenshot Reference -->
+            <div class="screenshot-container">
+                <img src="https://americomarqueses.github.io/images/rmx-sso-prd-config.png" alt="GCP API Configuration" class="screenshot">
+                <p class="screenshot-caption">GCP API Key Configuration Interface</p>
+            </div>
+
+            <h2 class="steps-title">📋 Configuration Steps</h2>
+
+            <!-- Step 1 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Access Google Cloud Console</div>
+                </div>
+                <div class="step-content">
+                    <p>Go to <span class="highlight">https://console.cloud.google.com</span> and select the correct project.</p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Navigate to Credentials</div>
+                </div>
+                <div class="step-content">
+                    <ul>
+                        <li>Click <span class="highlight">☰ Menu</span> → <span class="highlight">APIs & Services</span> → <span class="highlight">Credentials</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Create API Key</div>
+                </div>
+                <div class="step-content">
+                    <ul>
+                        <li>Click <span class="highlight">+ CREATE CREDENTIALS</span></li>
+                        <li>Select <span class="highlight">API key</span></li>
+                        <li>Copy and securely store the generated API key</li>
+                    </ul>
+                    <div class="note">
+                        <strong>⚠️ Important:</strong> The API key is shown only once. Save it immediately.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Configure Restrictions</div>
+                </div>
+                <div class="step-content">
+                    <p>Click on the API key name to edit, then configure:</p>
+                    <ul>
+                        <li><strong>Application restrictions:</strong> Set HTTP referrers or IP addresses</li>
+                        <li><strong>API restrictions:</strong> Select only required APIs</li>
+                    </ul>
+                    <div class="note">
+                        <strong>💡 Best Practice:</strong> Always restrict API keys for production environments.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Save Configuration</div>
+                </div>
+                <div class="step-content">
+                    <ul>
+                        <li>Review all settings</li>
+                        <li>Click <span class="highlight">SAVE</span></li>
+                        <li>Wait for changes to propagate (up to 5 minutes)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Test & Monitor</div>
+                </div>
+                <div class="step-content">
+                    <ul>
+                        <li>Test the API key in your application</li>
+                        <li>Monitor usage in the <span class="highlight">Metrics</span> tab</li>
+                        <li>Set up alerts for unusual activity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p><strong>AirAsia Group ICT</strong></p>
+            <p>RMX SSO Production Configuration Guide</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">Last Updated: November 4, 2025</p>
+        </footer>
+    </div>
+</body>
+</html>
