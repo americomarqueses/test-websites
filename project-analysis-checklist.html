@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Analysis & Workshop Checklist - AirAsia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --aa-red: #E60A14;
+            --aa-red-dark: #C40A12;
+            --text: #111827;
+            --muted: #6B7280;
+            --bg: #F7F7F8;
+            --card: #FFFFFF;
+            --border: #ECEFF1;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
+            --radius: 14px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.65;
+            color: var(--text);
+            background: var(--bg);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--card);
+            color: var(--text);
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            max-width: 72px;
+            height: auto;
+            flex-shrink: 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .header-separator {
+            color: #ddd;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px 32px;
+        }
+
+        .intro {
+            background: #FCFCFD;
+            padding: 24px;
+            border-radius: var(--radius);
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .intro h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--aa-red);
+            margin-bottom: 15px;
+        }
+
+        .intro p {
+            font-size: 1.05rem;
+            color: #495057;
+            line-height: 1.8;
+        }
+
+        .checklist-section {
+            margin-bottom: 36px;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 18px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s ease;
+            background: #FFFFFF;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title:hover {
+            color: var(--aa-red);
+            border-color: #EDEDED;
+        }
+
+        .section-toggle-icon {
+            font-size: 1.1rem;
+            transition: transform 0.25s ease;
+            color: var(--aa-red);
+        }
+
+        .section-title.collapsed .section-toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .section-content-wrapper {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+            max-height: 10000px;
+            opacity: 1;
+        }
+
+        .section-content-wrapper.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+        }
+
+        .checklist-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            margin-bottom: 18px;
+            transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .checklist-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #FF0000;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            border-color: #EAECEF;
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .checklist-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .item-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--aa-red) 0%, var(--aa-red-dark) 100%);
+            color: white;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 10px rgba(230, 10, 20, 0.18);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .item-question {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .item-toggle-icon {
+            font-size: 1.05rem;
+            color: var(--aa-red);
+            transition: transform 0.25s ease;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .item-header.collapsed .item-toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .item-content {
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            max-height: 10000px;
+            opacity: 1;
+        }
+
+        .item-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+        }
+
+        .item-section {
+            margin-bottom: 20px;
+        }
+
+        .item-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--aa-red);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-label::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--aa-red);
+            border-radius: 50%;
+        }
+
+        .section-content {
+            font-size: 0.98rem;
+            color: #3F444B;
+            line-height: 1.75;
+            padding: 14px 16px;
+            background: #FAFAFB;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .example-box {
+            background: #FFF7F7;
+            border-color: #FFE3E3;
+        }
+
+        .why-box {
+            background: #F1FAFF;
+            border-color: #DDF1FF;
+        }
+
+        .why-box .section-label {
+            color: #0EA5E9;
+        }
+
+        .why-box .section-label::before {
+            background: #0EA5E9;
+        }
+
+        .footer {
+            background: var(--card);
+            color: var(--muted);
+            padding: 28px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .footer strong {
+            color: var(--aa-red);
+            font-weight: 800;
+        }
+
+        /* Answers */
+        .answer-wrapper {
+            margin-top: 16px;
+        }
+
+        .answer-label {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .editor {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px;
+            border-bottom: 1px solid var(--border);
+            background: #FAFAFB;
+        }
+
+        .editor-btn {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #374151;
+            border-radius: 8px;
+            padding: 6px 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+
+        .editor-btn:hover {
+            background: #F5F6F7;
+            border-color: #E5E7EB;
+        }
+
+        .editor-content {
+            min-height: 140px;
+            padding: 16px 18px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            outline: none;
+        }
+
+        .editor-content:focus {
+            box-shadow: inset 0 0 0 2px rgba(230, 10, 20, 0.08);
+        }
+        .editor-content > :first-child { margin-top: 0; }
+        .editor-content > :last-child { margin-bottom: 0; }
+
+        .editor-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 8px;
+            border-top: 1px solid var(--border);
+            background: #FAFAFB;
+        }
+
+        .preview-btn {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #374151;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+
+        .preview-btn:hover { background: #F5F6F7; border-color: #E5E7EB; }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(17, 24, 39, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-backdrop.active { display: flex; }
+
+        .modal {
+            width: 100%;
+            max-width: 820px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: #FAFAFB;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title { font-weight: 800; font-size: 1rem; color: var(--text); }
+
+        .modal-close {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 8px;
+            padding: 6px 9px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .modal-body { padding: 16px; max-height: 70vh; overflow: auto; }
+        .modal-body { white-space: pre-wrap; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+        .modal-body :is(h1,h2,h3,h4) { margin-top: 12px; }
+        .modal-body p { margin: 8px 0; }
+        .modal-body blockquote { border-left: 3px solid var(--border); padding-left: 10px; color: #475569; }
+        .modal-body pre { background:#0b1020; color:#f3f4f6; padding:12px; border-radius:10px; overflow:auto; }
+        .modal-body code { background:#F3F4F6; padding:0 4px; border-radius:6px; }
+
+        .actions {
+            margin-top: 24px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .save-btn {
+            appearance: none;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: var(--aa-red);
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.05s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 6px 14px rgba(230, 10, 20, 0.18);
+        }
+
+        .save-btn:hover {
+            background: var(--aa-red-dark);
+            box-shadow: 0 8px 18px rgba(230, 10, 20, 0.22);
+        }
+
+        .save-btn:active {
+            transform: translateY(1px);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 25px;
+                flex-wrap: wrap;
+            }
+
+            .logo {
+                max-width: 70px;
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .header p {
+                font-size: 0.85rem;
+            }
+
+            .header-separator {
+                display: none;
+            }
+
+            .content {
+                padding: 24px 22px;
+            }
+
+            .checklist-item {
+                padding: 18px 16px;
+            }
+
+            .item-question {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .checklist-item:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="https://i.imgur.com/tvZMJ0I.png" alt="AirAsia Logo" class="logo">
+            <div class="header-content">
+                <h1>Project Analysis & Workshop</h1>
+                <span class="header-separator">|</span>
+                <p>Initial Stage Checklist & Discussion Points</p>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="intro">
+                <h2>📋 Overview</h2>
+                <p>This checklist serves as a comprehensive guide for project analysis and workshop discussions during the initial stages of project development. Each item includes the question or topic, practical examples, and the rationale for why it's essential to address during project kickoff.</p>
+            </div>
+
+            <!-- Project Objectives & Scope -->
+            <div class="checklist-section">
+                <h2 class="section-title">
+                    <span class="section-toggle-icon">▼</span>
+                    <span>🎯</span>
+                    <span>Project Objectives & Scope</span>
+                </h2>
+
+                <div class="section-content-wrapper">
+                    <div class="checklist-item">
+                        <div class="item-number">1</div>
+                        <div class="item-header">
+                            <span class="item-toggle-icon">▼</span>
+                            <div class="item-question">What are the primary business objectives and success criteria?</div>
+                        </div>
+                        
+                        <div class="item-content">
+                            <div class="item-section">
+                                <div class="section-label">Example</div>
+                                <div class="section-content example-box">
+                                    "Increase customer engagement by 40% within 6 months through a new mobile app feature, measured by daily active users and feature adoption rate."
+                                </div>
+                            </div>
+
+                            <div class="item-section">
+                                <div class="section-label">Why We Need It</div>
+                                <div class="section-content why-box">
+                                    Understanding clear objectives ensures all stakeholders are aligned from the start. It helps prioritize features, allocate resources effectively, and provides measurable criteria to evaluate project success. Without defined objectives, projects can drift off course and deliver solutions that don't meet business needs.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="item-number">2</div>
+                        <div class="item-question">What is the project scope and what's explicitly out of scope?</div>
+                        
+                        <div class="item-section">
+                            <div class="section-label">Example</div>
+                            <div class="section-content example-box">
+                                "In scope: User authentication, booking management, payment processing. Out of scope: Third-party integrations, advanced analytics dashboard (Phase 2), mobile push notifications."
+                            </div>
+                        </div>
+
+                        <div class="item-section">
+                            <div class="section-label">Why We Need It</div>
+                            <div class="section-content why-box">
+                                Clearly defining boundaries prevents scope creep, which is one of the leading causes of project delays and budget overruns. It helps manage stakeholder expectations and allows the team to focus on delivering the core value within the allocated timeline and budget.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stakeholders & Users -->
+            <div class="checklist-section">
+                <h2 class="section-title">
+                    <span>👥</span>
+                    <span>Stakeholders & Users</span>
+                </h2>
+
+                <div class="checklist-item">
+                    <div class="item-number">3</div>
+                    <div class="item-question">Who are the key stakeholders and decision-makers?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Primary stakeholders: Product Owner (Sarah Chen), Engineering Lead (Mike Tan), Business Sponsor (David Lim). Decision-makers: VP of Product (approval authority), CTO (technical approval)."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Identifying stakeholders early ensures proper communication channels and decision-making processes are established. It helps prevent bottlenecks when approvals are needed and ensures all voices are heard during critical discussions.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="item-number">4</div>
+                    <div class="item-question">Who is the target user base and what are their characteristics?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Primary users: Tech-savvy travelers aged 25-45, frequent flyers (3+ trips/year), comfortable with mobile apps. Secondary users: Occasional travelers, less tech-savvy, prefer web interface."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            User personas and characteristics directly influence design decisions, feature prioritization, and technical architecture. Understanding your users helps create intuitive experiences and ensures the solution addresses real user needs rather than assumptions.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Requirements -->
+            <div class="checklist-section">
+                <h2 class="section-title">
+                    <span>⚙️</span>
+                    <span>Technical Requirements</span>
+                </h2>
+
+                <div class="checklist-item">
+                    <div class="item-number">5</div>
+                    <div class="item-question">What are the technical constraints and integration requirements?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Must integrate with existing payment gateway (Stripe), support legacy API endpoints (REST), maintain compatibility with current authentication system (OAuth 2.0), support minimum iOS 13 and Android 8.0."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Technical constraints significantly impact architecture decisions, development timelines, and resource requirements. Identifying these early prevents costly rework and ensures the solution can be successfully integrated into the existing ecosystem.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="item-number">6</div>
+                    <div class="item-question">What are the performance, security, and scalability requirements?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Response time: < 200ms for 95% of requests, support 10,000 concurrent users, PCI-DSS compliance for payment data, GDPR compliance for user data, horizontal scaling capability."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Non-functional requirements are often overlooked but critical for production readiness. They determine infrastructure needs, architecture patterns, and testing strategies. Addressing these early prevents performance issues and security vulnerabilities that are expensive to fix later.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="item-number">7</div>
+                    <div class="item-question">What types of flights need to be supported and what are the considerations for Navitaire flight details?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Flight types: Normal flights (direct routes), FlyThrough (connecting flights with stopover), Through Fly (multi-segment flights). Considerations: Different data structures per flight type in Navitaire, fetching segment details for multi-segment flights, storing flight segments separately vs. combined, handling fare calculations for complex itineraries, managing seat availability across segments, and processing cancellations/refunds for multi-segment bookings."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Different flight types have distinct data requirements and business logic in Navitaire. Understanding these variations upfront is crucial for designing the data model, API integration patterns, and business logic for flight operations. This discussion helps identify edge cases in fetching, storing, and using flight details - such as how to handle connecting flight availability checks, fare aggregation for multi-segment trips, and seat selection across different segments. Without addressing this early, teams may discover incompatible data structures or missing integration points late in development, requiring significant refactoring.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="item-number">8</div>
+                    <div class="item-question">What types of bookings need to be supported and what are the considerations for Navitaire flight details?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Booking types: FIT (Free Independent Traveler - individual bookings), Government (government contracts and official travel), Corporate (business travel with negotiated rates). Considerations: Different fare structures and pricing rules per booking type in Navitaire, varying payment terms and credit limits, different cancellation/refund policies, special handling requirements for government and corporate bookings, storing booking type metadata for reporting and analytics, and managing access controls for different booking channels."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Different booking types have distinct business rules, data structures, and processing requirements in Navitaire. FIT bookings may have different fare calculations than corporate negotiated rates, while government bookings may have specific compliance and reporting needs. Understanding these variations upfront is essential for designing the data model to store booking type information, implementing correct fare fetching logic, handling payment processing differences, and managing booking workflows. This discussion helps identify requirements for fetching booking-specific flight details, storing booking type classifications, and ensuring proper handling of special terms and conditions that vary by booking type.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline & Resources -->
+            <div class="checklist-section">
+                <h2 class="section-title">
+                    <span>📅</span>
+                    <span>Timeline & Resources</span>
+                </h2>
+
+                <div class="checklist-item">
+                    <div class="item-number">9</div>
+                    <div class="item-question">What is the project timeline and key milestones?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Phase 1 (MVP): 3 months - Q1 2025. Milestones: Requirements finalized (Week 2), Design approval (Week 6), Development completion (Week 10), Testing (Week 11-12), Launch (Week 13)."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            A realistic timeline helps manage expectations and allows for proper planning. Milestones provide checkpoints to assess progress and make necessary adjustments. Understanding deadlines helps prioritize features and allocate resources effectively.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="item-number">10</div>
+                    <div class="item-question">What resources (team, budget, tools) are available?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Team: 2 frontend developers, 2 backend developers, 1 UI/UX designer, 1 QA engineer (part-time). Budget: $150K for Phase 1. Tools: Jira, Figma, AWS credits, CI/CD pipeline already in place."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Resource constraints directly impact what can be delivered and when. Understanding available resources helps set realistic expectations and identify gaps early. It also enables better planning for tool procurement, training, or additional hiring if needed.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risks & Dependencies -->
+            <div class="checklist-section">
+                <h2 class="section-title">
+                    <span>⚠️</span>
+                    <span>Risks & Dependencies</span>
+                </h2>
+
+                <div class="checklist-item">
+                    <div class="item-number">11</div>
+                    <div class="item-question">What are the potential risks and mitigation strategies?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Risk: Third-party API changes could delay integration. Mitigation: Early API contract agreements, mock services for development. Risk: Key team member availability. Mitigation: Knowledge sharing, documentation, backup resources."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Proactive risk identification allows teams to prepare contingency plans and mitigate issues before they become blockers. Early risk assessment helps stakeholders understand potential challenges and make informed decisions about timelines and scope.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="item-number">12</div>
+                    <div class="item-question">What are the external dependencies and their timelines?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Dependency: Payment gateway API access (needed by Week 4). Dependency: Design system components library (expected Week 3). Dependency: Infrastructure provisioning approval (needed by Week 2)."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            External dependencies often create critical path items that can delay entire projects if not managed properly. Identifying dependencies early allows teams to initiate requests, track progress, and adjust timelines proactively rather than discovering blockers mid-development.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Metrics -->
+            <div class="checklist-section">
+                <h2 class="section-title">
+                    <span>📊</span>
+                    <span>Success Metrics & Validation</span>
+                </h2>
+
+                <div class="checklist-item">
+                    <div class="item-number">13</div>
+                    <div class="item-question">How will success be measured and validated?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "KPIs: User adoption rate (target: 60% of active users within 3 months), transaction completion rate (target: 85%), user satisfaction score (target: 4.5/5), system uptime (target: 99.9%). Validation methods: A/B testing, user surveys, analytics dashboards."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Measurable success criteria provide objective evidence of project value and help teams stay focused on outcomes rather than just outputs. They enable data-driven decision-making and help justify continued investment in the project or identify areas for improvement.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="item-number">14</div>
+                    <div class="item-question">What is the rollback or pivot strategy if objectives aren't met?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "If user adoption < 30% after 2 months: Conduct user interviews, analyze behavior data, pivot to alternative feature set. If critical bugs affect > 5% users: Immediate rollback to previous version, 48-hour hotfix timeline."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Having a clear exit or pivot strategy prevents teams from continuing down failing paths and wasting resources. It promotes a culture of learning and adaptability, allowing organizations to fail fast and redirect efforts toward more promising solutions.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication & Process -->
+            <div class="checklist-section">
+                <h2 class="section-title">
+                    <span>💬</span>
+                    <span>Communication & Process</span>
+                </h2>
+
+                <div class="checklist-item">
+                    <div class="item-number">15</div>
+                    <div class="item-question">What are the communication channels and meeting cadence?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Daily standups: 9:30 AM (15 min), Sprint planning: Bi-weekly Mondays (2 hours), Stakeholder updates: Weekly Fridays (30 min), Slack channel: #project-alpha for async communication, Email: Weekly status reports."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Clear communication protocols prevent misalignment, ensure timely decision-making, and keep all stakeholders informed. Establishing these upfront sets expectations and prevents ad-hoc communication that can lead to missed information or delayed responses.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="item-number">16</div>
+                    <div class="item-question">What is the decision-making process and escalation path?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Technical decisions: Engineering Lead approval. Product decisions: Product Owner approval. Budget decisions: Business Sponsor approval. Escalation: If disagreement persists > 2 days, escalate to VP of Product. Emergency: CTO for critical technical issues."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Unclear decision-making processes lead to bottlenecks, delays, and frustration. Defining who makes what decisions and how to escalate issues ensures smooth project flow and prevents critical decisions from stalling progress.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button id="saveMarkdownBtn" class="save-btn">Save Answers as Markdown</button>
+        </div>
+
+        <footer class="footer">
+            <p><strong>AirAsia Group ICT</strong></p>
+            <p>Project Analysis & Workshop Checklist</p>
+            <p style="margin-top: 15px; font-size: 0.85rem; opacity: 0.7;">Use this checklist during project kickoff workshops to ensure comprehensive planning and alignment</p>
+        </footer>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Answer Preview</div>
+                <button type="button" class="modal-close" id="previewModalClose">Close</button>
+            </div>
+            <div class="modal-body" id="previewModalBody"></div>
+        </div>
+    </div>
+ 
+    <script>
+        // Initialize collapsible sections
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle section titles
+            const sectionTitles = document.querySelectorAll('.section-title');
+            sectionTitles.forEach(title => {
+                // Add toggle icon if not already present
+                if (!title.querySelector('.section-toggle-icon')) {
+                    const icon = document.createElement('span');
+                    icon.className = 'section-toggle-icon';
+                    icon.textContent = '▼';
+                    title.insertBefore(icon, title.firstChild);
+                }
+
+                // Wrap section content if not already wrapped
+                const section = title.closest('.checklist-section');
+                if (section) {
+                    let contentWrapper = section.querySelector('.section-content-wrapper');
+                    if (!contentWrapper) {
+                        // Find all items that are direct children of the section (not already in a wrapper)
+                        const allItems = Array.from(section.children).filter(child => 
+                            child.classList.contains('checklist-item')
+                        );
+                        
+                        if (allItems.length > 0) {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'section-content-wrapper';
+                            allItems.forEach(item => {
+                                wrapper.appendChild(item);
+                            });
+                            title.parentNode.insertBefore(wrapper, title.nextSibling);
+                        }
+                    }
+                }
+
+                // Default collapsed state for sections
+                const initialWrapper = title.closest('.checklist-section').querySelector('.section-content-wrapper');
+                if (initialWrapper) {
+                    title.classList.add('collapsed');
+                    initialWrapper.classList.add('collapsed');
+                }
+
+                // Add click handler
+                title.addEventListener('click', function() {
+                    const wrapper = this.closest('.checklist-section').querySelector('.section-content-wrapper');
+                    if (wrapper) {
+                        this.classList.toggle('collapsed');
+                        wrapper.classList.toggle('collapsed');
+                    }
+                });
+            });
+
+            // Handle checklist items
+            const checklistItems = document.querySelectorAll('.checklist-item');
+            checklistItems.forEach(item => {
+                const question = item.querySelector('.item-question');
+                if (question) {
+                    let header = item.querySelector('.item-header');
+                    let content = item.querySelector('.item-content');
+                    
+                    if (!header) {
+                        // Create item header
+                        header = document.createElement('div');
+                        header.className = 'item-header';
+                        
+                        // Create toggle icon
+                        const icon = document.createElement('span');
+                        icon.className = 'item-toggle-icon';
+                        icon.textContent = '▼';
+                        header.appendChild(icon);
+                        
+                        // Move question into header
+                        question.parentNode.removeChild(question);
+                        header.appendChild(question);
+                        
+                        // Find all item-sections and wrap them
+                        const sections = Array.from(item.querySelectorAll('.item-section'));
+                        if (sections.length > 0 && !content) {
+                            content = document.createElement('div');
+                            content.className = 'item-content';
+                            sections.forEach(section => {
+                                content.appendChild(section);
+                            });
+                        }
+                        
+                        // Insert header and content
+                        const itemNumber = item.querySelector('.item-number');
+                        if (itemNumber) {
+                            itemNumber.parentNode.insertBefore(header, itemNumber.nextSibling);
+                            if (content) {
+                                header.parentNode.insertBefore(content, header.nextSibling);
+                            }
+                        }
+                    }
+
+                    // Default collapsed state for items
+                    header = item.querySelector('.item-header');
+                    const defaultContent = header ? header.nextElementSibling : null;
+                    if (header && defaultContent && defaultContent.classList.contains('item-content')) {
+                        header.classList.add('collapsed');
+                        defaultContent.classList.add('collapsed');
+                    }
+
+                    // Add click handler
+                    header = item.querySelector('.item-header');
+                    if (header) {
+                        header.addEventListener('click', function() {
+                            const contentWrapper = this.nextElementSibling;
+                            if (contentWrapper && contentWrapper.classList.contains('item-content')) {
+                                this.classList.toggle('collapsed');
+                                contentWrapper.classList.toggle('collapsed');
+                            }
+                        });
+                    }
+                }
+            });
+            // After structuring items, inject editors
+            addAnswerEditors();
+        });
+
+        // Add rich text editors to each item
+        function addAnswerEditors() {
+            const items = document.querySelectorAll('.checklist-item');
+            items.forEach(item => {
+                let content = item.querySelector('.item-content');
+                if (!content) return;
+
+                // Skip if already added
+                if (!content.querySelector(':scope > .answer-wrapper')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'answer-wrapper';
+
+                    const label = document.createElement('label');
+                    label.className = 'answer-label';
+                    label.textContent = 'Your Answer';
+                    const idSuffix = (item.querySelector('.item-number')?.textContent?.trim() || '');
+
+                    const editor = document.createElement('div');
+                    editor.className = 'editor';
+                    editor.id = 'editor-' + idSuffix;
+
+                    const toolbar = document.createElement('div');
+                    toolbar.className = 'editor-toolbar';
+                    toolbar.innerHTML = `
+                        <button type="button" class="editor-btn" data-cmd="bold"><b>B</b></button>
+                        <button type="button" class="editor-btn" data-cmd="italic"><i>I</i></button>
+                        <button type="button" class="editor-btn" data-cmd="underline"><u>U</u></button>
+                        <button type="button" class="editor-btn" data-cmd="insertUnorderedList">• List</button>
+                        <button type="button" class="editor-btn" data-cmd="insertOrderedList">1. List</button>
+                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="h3">H3</button>
+                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="blockquote">“ Quote”</button>
+                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="pre">Code</button>
+                        <button type="button" class="editor-btn" data-cmd="createLink">Link</button>
+                        <button type="button" class="editor-btn" data-cmd="removeFormat">Clear</button>
+                    `;
+
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'editor-content';
+                    contentDiv.contentEditable = 'true';
+                    contentDiv.setAttribute('data-answer', 'true');
+
+                    const actions = document.createElement('div');
+                    actions.className = 'editor-actions';
+                    const previewBtn = document.createElement('button');
+                    previewBtn.type = 'button';
+                    previewBtn.className = 'preview-btn';
+                    previewBtn.textContent = 'Preview';
+                    actions.appendChild(previewBtn);
+
+                    editor.appendChild(toolbar);
+                    editor.appendChild(contentDiv);
+                    editor.appendChild(actions);
+
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(editor);
+                    content.appendChild(wrapper);
+
+                    // Toolbar actions
+                    toolbar.addEventListener('click', function(e) {
+                        const btn = e.target.closest('.editor-btn');
+                        if (!btn) return;
+                        const cmd = btn.getAttribute('data-cmd');
+                        const value = btn.getAttribute('data-value');
+                        contentDiv.focus();
+                        if (cmd === 'createLink') {
+                            const url = prompt('Enter URL');
+                            if (url) document.execCommand('createLink', false, url);
+                            return;
+                        }
+                        if (cmd === 'formatBlock') {
+                            document.execCommand('formatBlock', false, value);
+                            return;
+                        }
+                        document.execCommand(cmd, false, null);
+                    });
+
+                    // Preview modal actions
+                    previewBtn.addEventListener('click', function() {
+                        const modal = document.getElementById('previewModal');
+                        const body = document.getElementById('previewModalBody');
+                        const itemTitle = editor.closest('.checklist-item')?.querySelector('.item-question')?.textContent?.trim() || 'Answer Preview';
+                        const subsectionTitle = editor.closest('.item-section')?.querySelector('.section-label')?.textContent?.trim();
+                        const title = subsectionTitle ? (itemTitle + ' — ' + subsectionTitle) : itemTitle;
+                        modal.querySelector('.modal-title').textContent = title;
+
+                        // Basic sanitization: allow a small set of tags
+                        const allowed = ['B','STRONG','I','EM','U','P','BR','UL','OL','LI','H1','H2','H3','BLOCKQUOTE','PRE','CODE','A','DIV'];
+                        const clone = contentDiv.cloneNode(true);
+                        (function sanitize(node){
+                            const kids = Array.from(node.childNodes);
+                            kids.forEach(child => {
+                                if (child.nodeType === 1) { // element
+                                    if (!allowed.includes(child.tagName)) {
+                                        const span = document.createElement('span');
+                                        span.innerHTML = child.innerHTML;
+                                        child.replaceWith(span);
+                                    } else {
+                                        if (child.tagName === 'A') {
+                                            const href = child.getAttribute('href') || '';
+                                            if (/^javascript:/i.test(href)) child.setAttribute('href', '#');
+                                            child.setAttribute('rel','noopener noreferrer');
+                                            child.setAttribute('target','_blank');
+                                        }
+                                    }
+                                    sanitize(child);
+                                }
+                            });
+                        })(clone);
+
+                        body.innerHTML = '';
+                        // Normalize HTML to preserve line breaks
+                        let html = clone.innerHTML
+                            .replace(/<div>([\s\S]*?)<\/div>/gi, '<p>$1</p>')
+                            .replace(/<p>(?:\s|&nbsp;|<br\s*\/??>)*<\/p>/gi, '')
+                            .replace(/\n/g, '<br>');
+
+                        body.innerHTML = html;
+                        modal.classList.add('active');
+                        modal.setAttribute('aria-hidden','false');
+                    });
+                }
+
+                // Add editors for each subsection within this item
+                const subsections = content.querySelectorAll('.item-section');
+                let subsectionIndex = 0;
+                subsections.forEach(section => {
+                    if (section.querySelector('.answer-wrapper')) return; // already added
+                    subsectionIndex += 1;
+
+                    const subWrapper = document.createElement('div');
+                    subWrapper.className = 'answer-wrapper';
+
+                    const subLabel = document.createElement('label');
+                    subLabel.className = 'answer-label';
+                    subLabel.textContent = 'Your Notes for this subsection';
+
+                    const subEditor = document.createElement('div');
+                    subEditor.className = 'editor';
+                    subEditor.id = 'editor-' + (item.querySelector('.item-number')?.textContent?.trim() || '') + '-' + subsectionIndex;
+
+                    const subToolbar = document.createElement('div');
+                    subToolbar.className = 'editor-toolbar';
+                    subToolbar.innerHTML = `
+                        <button type="button" class="editor-btn" data-cmd="bold"><b>B</b></button>
+                        <button type="button" class="editor-btn" data-cmd="italic"><i>I</i></button>
+                        <button type="button" class="editor-btn" data-cmd="underline"><u>U</u></button>
+                        <button type="button" class="editor-btn" data-cmd="insertUnorderedList">• List</button>
+                        <button type="button" class="editor-btn" data-cmd="insertOrderedList">1. List</button>
+                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="h3">H3</button>
+                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="blockquote">“ Quote”</button>
+                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="pre">Code</button>
+                        <button type="button" class="editor-btn" data-cmd="createLink">Link</button>
+                        <button type="button" class="editor-btn" data-cmd="removeFormat">Clear</button>
+                    `;
+
+                    const subContentDiv = document.createElement('div');
+                    subContentDiv.className = 'editor-content';
+                    subContentDiv.contentEditable = 'true';
+                    subContentDiv.setAttribute('data-answer', 'true');
+
+                    const subActions = document.createElement('div');
+                    subActions.className = 'editor-actions';
+                    const subPreviewBtn = document.createElement('button');
+                    subPreviewBtn.type = 'button';
+                    subPreviewBtn.className = 'preview-btn';
+                    subPreviewBtn.textContent = 'Preview';
+                    subActions.appendChild(subPreviewBtn);
+
+                    subEditor.appendChild(subToolbar);
+                    subEditor.appendChild(subContentDiv);
+                    subEditor.appendChild(subActions);
+
+                    subWrapper.appendChild(subLabel);
+                    subWrapper.appendChild(subEditor);
+                    section.appendChild(subWrapper);
+
+                    // Toolbar actions for subsection
+                    subToolbar.addEventListener('click', function(e) {
+                        const btn = e.target.closest('.editor-btn');
+                        if (!btn) return;
+                        const cmd = btn.getAttribute('data-cmd');
+                        const value = btn.getAttribute('data-value');
+                        subContentDiv.focus();
+                        if (cmd === 'createLink') {
+                            const url = prompt('Enter URL');
+                            if (url) document.execCommand('createLink', false, url);
+                            return;
+                        }
+                        if (cmd === 'formatBlock') {
+                            document.execCommand('formatBlock', false, value);
+                            return;
+                        }
+                        document.execCommand(cmd, false, null);
+                    });
+
+                    // Preview for subsection
+                    subPreviewBtn.addEventListener('click', function() {
+                        const modal = document.getElementById('previewModal');
+                        const body = document.getElementById('previewModalBody');
+                        const itemTitle = subEditor.closest('.checklist-item')?.querySelector('.item-question')?.textContent?.trim() || 'Answer Preview';
+                        const subsectionTitle = subEditor.closest('.item-section')?.querySelector('.section-label')?.textContent?.trim();
+                        const title = subsectionTitle ? (itemTitle + ' — ' + subsectionTitle) : itemTitle;
+                        modal.querySelector('.modal-title').textContent = title;
+
+                        const allowed = ['B','STRONG','I','EM','U','P','BR','UL','OL','LI','H1','H2','H3','BLOCKQUOTE','PRE','CODE','A','DIV'];
+                        const clone = subContentDiv.cloneNode(true);
+                        (function sanitize(node){
+                            const kids = Array.from(node.childNodes);
+                            kids.forEach(child => {
+                                if (child.nodeType === 1) {
+                                    if (!allowed.includes(child.tagName)) {
+                                        const span = document.createElement('span');
+                                        span.innerHTML = child.innerHTML;
+                                        child.replaceWith(span);
+                                    } else {
+                                        if (child.tagName === 'A') {
+                                            const href = child.getAttribute('href') || '';
+                                            if (/^javascript:/i.test(href)) child.setAttribute('href', '#');
+                                            child.setAttribute('rel','noopener noreferrer');
+                                            child.setAttribute('target','_blank');
+                                        }
+                                    }
+                                    sanitize(child);
+                                }
+                            });
+                        })(clone);
+
+                        body.innerHTML = '';
+                        let html = clone.innerHTML
+                            .replace(/<div>([\s\S]*?)<\/div>/gi, '<p>$1</p>')
+                            .replace(/<p>(?:\s|&nbsp;|<br\s*\/??>)*<\/p>/gi, '')
+                            .replace(/\n/g, '<br>');
+
+                        body.innerHTML = html;
+                        modal.classList.add('active');
+                        modal.setAttribute('aria-hidden','false');
+                    });
+                });
+            });
+        }
+
+        // Generate and download markdown with all Q&A
+        (function initSaveMarkdown() {
+            const btn = document.getElementById('saveMarkdownBtn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function() {
+                const lines = [];
+                const pageTitle = document.title || 'Project Analysis & Workshop Checklist - AirAsia';
+                lines.push('# ' + pageTitle);
+                lines.push('');
+                lines.push('Generated: ' + new Date().toISOString());
+                lines.push('');
+
+                const sections = document.querySelectorAll('.checklist-section');
+                sections.forEach(section => {
+                    const titleEl = section.querySelector('.section-title');
+                    const sectionTitle = titleEl ? Array.from(titleEl.querySelectorAll('span'))
+                        .map(s => s.textContent)
+                        .filter(Boolean)
+                        .join(' ').trim() : 'Section';
+
+                    lines.push('## ' + sectionTitle);
+                    lines.push('');
+
+                    const items = section.querySelectorAll('.checklist-item');
+                    items.forEach(item => {
+                        const num = (item.querySelector('.item-number')?.textContent || '').trim();
+                        const q = (item.querySelector('.item-question')?.textContent || 'Question').trim();
+                        // Main answer (direct answer-wrapper under item-content)
+                        const mainEditorContent = item.querySelector(':scope .item-content > .answer-wrapper .editor-content');
+                        const aHtml = mainEditorContent ? mainEditorContent.innerHTML : '';
+                        const a = aHtml.trim();
+
+                        lines.push('### ' + (num ? num + '. ' : '') + q);
+                        lines.push('');
+                        lines.push('**Answer**');
+                        lines.push('');
+                        if (a.length) {
+                            // Basic HTML -> Markdown conversion
+                            let md = a
+                                .replace(/\n/g, '')
+                                .replace(/<\/?p>/g, '\n\n')
+                                .replace(/<br\s*\/?>(?=.)/g, '\n')
+                                .replace(/<strong>|<b>/g, '**').replace(/<\/strong>|<\/b>/g, '**')
+                                .replace(/<em>|<i>/g, '*').replace(/<\/em>|<\/i>/g, '*')
+                                .replace(/<u>(.*?)<\/u>/g, '$1')
+                                .replace(/<h3[^>]*>(.*?)<\/h3>/g, '### $1\n')
+                                .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/g, function(_, c){return '> ' + c.replace(/<br\s*\/?>(?=.)/g,'\n> ').replace(/<[^>]+>/g,'') + '\n';})
+                                .replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g, '```\n$1\n```\n')
+                                .replace(/<pre[^>]*>([\s\S]*?)<\/pre>/g, '```\n$1\n```\n')
+                                .replace(/<code[^>]*>([\s\S]*?)<\/code>/g, '`$1`')
+                                .replace(/<a[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>/g, '[$2]($1)')
+                                .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/g, function(_, c){
+                                    return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, '- $1\n').replace(/<[^>]+>/g,'');
+                                })
+                                .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/g, function(_, c){
+                                    let i=1; return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, ()=> (i++)+'. $1\n').replace(/<[^>]+>/g,'');
+                                })
+                                .replace(/<[^>]+>/g, '');
+                            md = md.replace(/\n{3,}/g, '\n\n').trim();
+                            lines.push(md);
+                        } else {
+                            lines.push('_(no answer provided)_');
+                        }
+                        lines.push('');
+
+                        // Subsection answers
+                        const subsections = item.querySelectorAll(':scope .item-section');
+                        subsections.forEach(sec => {
+                            const label = (sec.querySelector('.section-label')?.textContent || 'Subsection').trim();
+                            const subEditorContent = sec.querySelector('.editor-content');
+                            const sHtml = subEditorContent ? subEditorContent.innerHTML : '';
+                            const s = sHtml.trim();
+                            lines.push('#### ' + label);
+                            lines.push('');
+                            if (s.length) {
+                                let smd = s
+                                    .replace(/\n/g, '')
+                                    .replace(/<\/?p>/g, '\n\n')
+                                    .replace(/<br\s*\/?>(?=.)/g, '\n')
+                                    .replace(/<strong>|<b>/g, '**').replace(/<\/strong>|<\/b>/g, '**')
+                                    .replace(/<em>|<i>/g, '*').replace(/<\/em>|<\/i>/g, '*')
+                                    .replace(/<u>(.*?)<\/u>/g, '$1')
+                                    .replace(/<h3[^>]*>(.*?)<\/h3>/g, '### $1\n')
+                                    .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/g, function(_, c){return '> ' + c.replace(/<br\s*\/?>(?=.)/g,'\n> ').replace(/<[^>]+>/g,'') + '\n';})
+                                    .replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g, '```\n$1\n```\n')
+                                    .replace(/<pre[^>]*>([\s\S]*?)<\/pre>/g, '```\n$1\n```\n')
+                                    .replace(/<code[^>]*>([\s\S]*?)<\/code>/g, '`$1`')
+                                    .replace(/<a[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>/g, '[$2]($1)')
+                                    .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/g, function(_, c){
+                                        return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, '- $1\n').replace(/<[^>]+>/g,'');
+                                    })
+                                    .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/g, function(_, c){
+                                        let i=1; return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, ()=> (i++)+'. $1\n').replace(/<[^>]+>/g,'');
+                                    })
+                                    .replace(/<[^>]+>/g, '');
+                                smd = smd.replace(/\n{3,}/g, '\n\n').trim();
+                                lines.push(smd);
+                            } else {
+                                lines.push('_(no notes provided)_');
+                            }
+                            lines.push('');
+                        });
+                    });
+
+                    lines.push('');
+                });
+
+                const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const dateStr = new Date().toISOString().replace(/[:.]/g, '-');
+                a.href = url;
+                a.download = 'project-analysis-answers-' + dateStr + '.md';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        })();
+
+        // Shared modal close handling
+        (function modalControls(){
+            const modal = document.getElementById('previewModal');
+            const closeBtn = document.getElementById('previewModalClose');
+            function close(){ modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); }
+            if (closeBtn) closeBtn.addEventListener('click', close);
+            if (modal) modal.addEventListener('click', function(e){ if (e.target === modal) close(); });
+            document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && modal.classList.contains('active')) close(); });
+        })();
+    </script>
+</body>
+</html>
