@@ -757,6 +757,25 @@
                         </div>
                     </div>
                 </div>
+                <div class="checklist-item">
+                    <div class="item-number">9</div>
+                    <div class="item-question">What existing data sources are needed (e.g., databases, BigQuery, Navitaire endpoints)?</div>
+                    
+                    <div class="item-section">
+                        <div class="section-label">Example</div>
+                        <div class="section-content example-box">
+                            "Data sources: Primary OLTP database (read replica), Analytics warehouse (BigQuery datasets: bookings, payments), Navitaire API endpoints (availability, pricing, PNR), internal microservice APIs (profile, loyalty), 3rd-party risk service. Access patterns: batch reads (nightly), near-real-time streams (Pub/Sub), on-demand API calls."
+                        </div>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Why We Need It</div>
+                        <div class="section-content why-box">
+                            Knowing the required data sources upfront enables connectivity planning (VPC peering/VPN, firewall rules, allowlists), IAM and credential provisioning (service accounts, key rotation), and capacity planning (throughput, quotas, latency budgets). It also clarifies ownership, SLAs, schemas, and data freshness expectations, which drive caching strategies, error handling, and fallback logic when upstream systems are unavailable.
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Timeline & Resources -->
@@ -767,7 +786,7 @@
                 </h2>
 
                 <div class="checklist-item">
-                    <div class="item-number">9</div>
+                    <div class="item-number">10</div>
                     <div class="item-question">What is the project timeline and key milestones?</div>
                     
                     <div class="item-section">
@@ -786,7 +805,7 @@
                 </div>
 
                 <div class="checklist-item">
-                    <div class="item-number">10</div>
+                    <div class="item-number">11</div>
                     <div class="item-question">What resources (team, budget, tools) are available?</div>
                     
                     <div class="item-section">
@@ -813,7 +832,7 @@
                 </h2>
 
                 <div class="checklist-item">
-                    <div class="item-number">11</div>
+                    <div class="item-number">12</div>
                     <div class="item-question">What are the potential risks and mitigation strategies?</div>
                     
                     <div class="item-section">
@@ -832,7 +851,7 @@
                 </div>
 
                 <div class="checklist-item">
-                    <div class="item-number">12</div>
+                    <div class="item-number">13</div>
                     <div class="item-question">What are the external dependencies and their timelines?</div>
                     
                     <div class="item-section">
@@ -859,7 +878,7 @@
                 </h2>
 
                 <div class="checklist-item">
-                    <div class="item-number">13</div>
+                    <div class="item-number">14</div>
                     <div class="item-question">How will success be measured and validated?</div>
                     
                     <div class="item-section">
@@ -878,7 +897,7 @@
                 </div>
 
                 <div class="checklist-item">
-                    <div class="item-number">14</div>
+                    <div class="item-number">15</div>
                     <div class="item-question">What is the rollback or pivot strategy if objectives aren't met?</div>
                     
                     <div class="item-section">
@@ -905,7 +924,7 @@
                 </h2>
 
                 <div class="checklist-item">
-                    <div class="item-number">15</div>
+                    <div class="item-number">16</div>
                     <div class="item-question">What are the communication channels and meeting cadence?</div>
                     
                     <div class="item-section">
@@ -924,7 +943,7 @@
                 </div>
 
                 <div class="checklist-item">
-                    <div class="item-number">16</div>
+                    <div class="item-number">17</div>
                     <div class="item-question">What is the decision-making process and escalation path?</div>
                     
                     <div class="item-section">
@@ -1092,122 +1111,10 @@
             items.forEach(item => {
                 let content = item.querySelector('.item-content');
                 if (!content) return;
-
-                // Skip if already added
-                if (!content.querySelector(':scope > .answer-wrapper')) {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'answer-wrapper';
-
-                    const label = document.createElement('label');
-                    label.className = 'answer-label';
-                    label.textContent = 'Your Answer';
-                    const idSuffix = (item.querySelector('.item-number')?.textContent?.trim() || '');
-
-                    const editor = document.createElement('div');
-                    editor.className = 'editor';
-                    editor.id = 'editor-' + idSuffix;
-
-                    const toolbar = document.createElement('div');
-                    toolbar.className = 'editor-toolbar';
-                    toolbar.innerHTML = `
-                        <button type="button" class="editor-btn" data-cmd="bold"><b>B</b></button>
-                        <button type="button" class="editor-btn" data-cmd="italic"><i>I</i></button>
-                        <button type="button" class="editor-btn" data-cmd="underline"><u>U</u></button>
-                        <button type="button" class="editor-btn" data-cmd="insertUnorderedList">• List</button>
-                        <button type="button" class="editor-btn" data-cmd="insertOrderedList">1. List</button>
-                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="h3">H3</button>
-                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="blockquote">“ Quote”</button>
-                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="pre">Code</button>
-                        <button type="button" class="editor-btn" data-cmd="createLink">Link</button>
-                        <button type="button" class="editor-btn" data-cmd="removeFormat">Clear</button>
-                    `;
-
-                    const contentDiv = document.createElement('div');
-                    contentDiv.className = 'editor-content';
-                    contentDiv.contentEditable = 'true';
-                    contentDiv.setAttribute('data-answer', 'true');
-
-                    const actions = document.createElement('div');
-                    actions.className = 'editor-actions';
-                    const previewBtn = document.createElement('button');
-                    previewBtn.type = 'button';
-                    previewBtn.className = 'preview-btn';
-                    previewBtn.textContent = 'Preview';
-                    actions.appendChild(previewBtn);
-
-                    editor.appendChild(toolbar);
-                    editor.appendChild(contentDiv);
-                    editor.appendChild(actions);
-
-                    wrapper.appendChild(label);
-                    wrapper.appendChild(editor);
-                    content.appendChild(wrapper);
-
-                    // Toolbar actions
-                    toolbar.addEventListener('click', function(e) {
-                        const btn = e.target.closest('.editor-btn');
-                        if (!btn) return;
-                        const cmd = btn.getAttribute('data-cmd');
-                        const value = btn.getAttribute('data-value');
-                        contentDiv.focus();
-                        if (cmd === 'createLink') {
-                            const url = prompt('Enter URL');
-                            if (url) document.execCommand('createLink', false, url);
-                            return;
-                        }
-                        if (cmd === 'formatBlock') {
-                            document.execCommand('formatBlock', false, value);
-                            return;
-                        }
-                        document.execCommand(cmd, false, null);
-                    });
-
-                    // Preview modal actions
-                    previewBtn.addEventListener('click', function() {
-                        const modal = document.getElementById('previewModal');
-                        const body = document.getElementById('previewModalBody');
-                        const itemTitle = editor.closest('.checklist-item')?.querySelector('.item-question')?.textContent?.trim() || 'Answer Preview';
-                        const subsectionTitle = editor.closest('.item-section')?.querySelector('.section-label')?.textContent?.trim();
-                        const title = subsectionTitle ? (itemTitle + ' — ' + subsectionTitle) : itemTitle;
-                        modal.querySelector('.modal-title').textContent = title;
-
-                        // Basic sanitization: allow a small set of tags
-                        const allowed = ['B','STRONG','I','EM','U','P','BR','UL','OL','LI','H1','H2','H3','BLOCKQUOTE','PRE','CODE','A','DIV'];
-                        const clone = contentDiv.cloneNode(true);
-                        (function sanitize(node){
-                            const kids = Array.from(node.childNodes);
-                            kids.forEach(child => {
-                                if (child.nodeType === 1) { // element
-                                    if (!allowed.includes(child.tagName)) {
-                                        const span = document.createElement('span');
-                                        span.innerHTML = child.innerHTML;
-                                        child.replaceWith(span);
-                                    } else {
-                                        if (child.tagName === 'A') {
-                                            const href = child.getAttribute('href') || '';
-                                            if (/^javascript:/i.test(href)) child.setAttribute('href', '#');
-                                            child.setAttribute('rel','noopener noreferrer');
-                                            child.setAttribute('target','_blank');
-                                        }
-                                    }
-                                    sanitize(child);
-                                }
-                            });
-                        })(clone);
-
-                        body.innerHTML = '';
-                        // Normalize HTML to preserve line breaks
-                        let html = clone.innerHTML
-                            .replace(/<div>([\s\S]*?)<\/div>/gi, '<p>$1</p>')
-                            .replace(/<p>(?:\s|&nbsp;|<br\s*\/??>)*<\/p>/gi, '')
-                            .replace(/\n/g, '<br>');
-
-                        body.innerHTML = html;
-                        modal.classList.add('active');
-                        modal.setAttribute('aria-hidden','false');
-                    });
-                }
-
+                // Remove any previously created main answer editor wrappers to enforce per-subsection only
+                const mainAnswer = content.querySelector(':scope > .answer-wrapper');
+                if (mainAnswer) mainAnswer.remove();
+ 
                 // Add editors for each subsection within this item
                 const subsections = content.querySelectorAll('.item-section');
                 let subsectionIndex = 0;
@@ -1355,42 +1262,7 @@
                     items.forEach(item => {
                         const num = (item.querySelector('.item-number')?.textContent || '').trim();
                         const q = (item.querySelector('.item-question')?.textContent || 'Question').trim();
-                        // Main answer (direct answer-wrapper under item-content)
-                        const mainEditorContent = item.querySelector(':scope .item-content > .answer-wrapper .editor-content');
-                        const aHtml = mainEditorContent ? mainEditorContent.innerHTML : '';
-                        const a = aHtml.trim();
-
                         lines.push('### ' + (num ? num + '. ' : '') + q);
-                        lines.push('');
-                        lines.push('**Answer**');
-                        lines.push('');
-                        if (a.length) {
-                            // Basic HTML -> Markdown conversion
-                            let md = a
-                                .replace(/\n/g, '')
-                                .replace(/<\/?p>/g, '\n\n')
-                                .replace(/<br\s*\/?>(?=.)/g, '\n')
-                                .replace(/<strong>|<b>/g, '**').replace(/<\/strong>|<\/b>/g, '**')
-                                .replace(/<em>|<i>/g, '*').replace(/<\/em>|<\/i>/g, '*')
-                                .replace(/<u>(.*?)<\/u>/g, '$1')
-                                .replace(/<h3[^>]*>(.*?)<\/h3>/g, '### $1\n')
-                                .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/g, function(_, c){return '> ' + c.replace(/<br\s*\/?>(?=.)/g,'\n> ').replace(/<[^>]+>/g,'') + '\n';})
-                                .replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g, '```\n$1\n```\n')
-                                .replace(/<pre[^>]*>([\s\S]*?)<\/pre>/g, '```\n$1\n```\n')
-                                .replace(/<code[^>]*>([\s\S]*?)<\/code>/g, '`$1`')
-                                .replace(/<a[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>/g, '[$2]($1)')
-                                .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/g, function(_, c){
-                                    return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, '- $1\n').replace(/<[^>]+>/g,'');
-                                })
-                                .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/g, function(_, c){
-                                    let i=1; return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, ()=> (i++)+'. $1\n').replace(/<[^>]+>/g,'');
-                                })
-                                .replace(/<[^>]+>/g, '');
-                            md = md.replace(/\n{3,}/g, '\n\n').trim();
-                            lines.push(md);
-                        } else {
-                            lines.push('_(no answer provided)_');
-                        }
                         lines.push('');
 
                         // Subsection answers
@@ -1430,6 +1302,8 @@
                             }
                             lines.push('');
                         });
+
+                        lines.push('');
                     });
 
                     lines.push('');
