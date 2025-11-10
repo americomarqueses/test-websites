@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Action Plan | AirAsia Knowledge Bot</title>
+    
+    <!-- 1. Load Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Load 'Inter' font for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 3. Custom CSS and Tailwind Configuration -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Configure Tailwind to use AirAsia's brand red */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'airasia-red': '#D80027',
+                        'airasia-dark': '#111827',
+                        'airasia-gray': '#f3f4f6',
+                    }
+                }
+            }
+        }
+    </style>
+</head>
+<body class="bg-airasia-gray">
+
+    <div class="max-w-4xl mx-auto p-6 md:p-12 bg-white my-10 rounded-lg shadow-2xl">
+        
+        <!-- Header -->
+        <header class="flex items-center space-x-4 mb-10 pb-6 border-b border-gray-200">
+            <img 
+                src="https://i.imgur.com/tvZMJ0I.png" 
+                alt="AirAsia Logo" 
+                class="h-12 w-auto"
+                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+            >
+            <!-- Fallback text for logo -->
+            <span class="text-3xl font-bold text-airasia-red hidden">AirAsia</span>
+
+            <div>
+                <h1 class="text-3xl font-bold text-airasia-dark">Knowledge Bot Action Plan</h1>
+                <p class="text-lg text-gray-600">Gemini + Confluence + Workvivo Integration</p>
+            </div>
+        </header>
+
+        <!-- Prerequisites -->
+        <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg shadow-inner mb-12">
+            <h2 class="text-2xl font-semibold text-airasia-dark mb-4">Prerequisites (What You'll Need)</h2>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li><strong>Confluence:</strong> Administrator access or at least permissions to use the Confluence API.</li>
+                <li><strong>Google Cloud / AI Studio:</strong> An API key for the Gemini models (e.g., Gemini 1.5 Pro).</li>
+                <li><strong>Workvivo:</strong> Administrator access to add and configure Apps or embedded content in Spaces.</li>
+                <li><strong>Programming Environment:</strong> Python is highly recommended.</li>
+                <li><strong>Cloud Hosting:</strong> A service to host your backend API (e.g., Google Cloud Run, AWS Lambda).</li>
+            </ul>
+        </div>
+
+        <!-- Action Plan Timeline -->
+        <div class="relative">
+            <!-- The vertical line -->
+            <div class="absolute left-4 top-2 h-full w-0.5 bg-gray-200" aria-hidden="true"></div>
+
+            <!-- Phase 1 -->
+            <div class="mb-10 relative">
+                <h3 class="text-2xl font-bold text-airasia-red mb-6 relative z-10">
+                    <span class="absolute -left-6 top-1.5 w-5 h-5 bg-airasia-red rounded-full border-4 border-white shadow-sm" aria-hidden="true"></span>
+                    Phase 1: Foundation & Planning
+                </h3>
+                <div class="space-y-6 pl-8">
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 1: Define the Scope</h4>
+                        <p class="text-gray-700 mt-1">Identify your users, which specific Confluence spaces to include, and exactly where the bot will live inside Workvivo (e.g., main App, or embedded in an "IT Support" Space).</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 2: Set Up Environment & Access</h4>
+                        <p class="text-gray-700 mt-1">Create your Google Gemini API key and your Confluence API token. Set up your Python project and install initial libraries (`google-generativeai`, `atlassian-python-api`).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="mb-10 relative">
+                <h3 class="text-2xl font-bold text-airasia-red mb-6 relative z-10">
+                    <span class="absolute -left-6 top-1.5 w-5 h-5 bg-airasia-red rounded-full border-4 border-white shadow-sm" aria-hidden="true"></span>
+                    Phase 2: The Data Pipeline (ETL)
+                </h3>
+                <div class="space-y-6 pl-8">
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 3: Extract Data from Confluence</h4>
+                        <p class="text-gray-700 mt-1">Write a script to connect to the Confluence API and fetch the raw content from your target pages. This will likely be in a raw HTML/XML format.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 4: Clean and Pre-process Text</h4>
+                        <p class="text-gray-700 mt-1">Convert the messy HTML/XML to clean, plain text. You must strip out all irrelevant content like navigation bars, "Likes," comment sections, and page macros.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 5: "Chunk" the Data</h4>
+                        <p class="text-gray-700 mt-1">Break the clean text into small, semantically complete pieces (chunks), typically 500-1000 characters. This is essential for the retrieval process.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 6: Create Embeddings</h4>
+                        <p class="text-gray-700 mt-1">Use a Google embedding model (e.g., `text-embedding-004`) to convert each text chunk into a numerical vector (an "embedding"), which represents its meaning.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 7: Load into a Vector Database</h4>
+                        <p class="text-gray-700 mt-1">Store all vectors, their original text, and metadata (like the Confluence URL) in a vector database. This is your bot's searchable "memory."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="mb-10 relative">
+                <h3 class="text-2xl font-bold text-airasia-red mb-6 relative z-10">
+                    <span class="absolute -left-6 top-1.5 w-5 h-5 bg-airasia-red rounded-full border-4 border-white shadow-sm" aria-hidden="true"></span>
+                    Phase 3: The RAG Core Logic (Backend)
+                </h3>
+                <div class="space-y-6 pl-8">
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 8: Retrieve Relevant Context</h4>
+                        <p class="text-gray-700 mt-1">When a user asks a question, embed their question (using the same model) and search your vector database to find the top 5 most relevant text chunks.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 9: Augment the Prompt</h4>
+                        <p class="text-gray-700 mt-1">Create a detailed prompt for Gemini. This prompt will include your instructions, the "context" you just retrieved, and the user's original question.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 10: Generate the Answer</h4>
+                        <p class="text-gray-700 mt-1">Send the final augmented prompt to the Gemini API. It will generate an answer based *only* on the Confluence context you provided, preventing hallucinations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 4 -->
+            <div class="mb-10 relative">
+                <h3 class="text-2xl font-bold text-airasia-red mb-6 relative z-10">
+                    <span class="absolute -left-6 top-1.5 w-5 h-5 bg-airasia-red rounded-full border-4 border-white shadow-sm" aria-hidden="true"></span>
+                    Phase 4: Workvivo Interface & Deployment
+                </h3>
+                <div class="space-y-6 pl-8">
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 11: Build a Chatbot API Endpoint</h4>
+                        <p class="text-gray-700 mt-1">Wrap your RAG logic (Steps 8-10) in a backend API (e.g., using FastAPI or Flask). This endpoint will receive a question and return a JSON answer.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 12: Build a Minimal Chatbot Web UI</h4>
+                        <p class="text-gray-700 mt-1">Create a "headless" chat interface (like the HTML file we built previously). This UI's only job is to call your API endpoint and display the conversation.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 13: Deploy Your API and UI</h4>
+                        <p class="text-gray-700 mt-1">Host your backend API and frontend UI on a cloud service (like Google Cloud Run) to get a secure, public HTTPS URL.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 14: Embed into Workvivo</h4>
+                        <p class="text-gray-700 mt-1">In Workvivo, go to `Admin > Apps` or a specific Space. Use the "Embed" feature to add your chatbot's public URL as an `iframe`. This will make it appear seamlessly inside the platform.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 15: Secure Your Embedded App</h4>
+                        <p class="text-gray-700 mt-1">Configure CORS (Cross-Origin Resource Sharing) on your backend API to *only* allow requests from your Workvivo domain. This prevents unauthorized use.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 5 -->
+            <div class="relative">
+                <h3 class="text-2xl font-bold text-airasia-red mb-6 relative z-10">
+                    <span class="absolute -left-6 top-1.5 w-5 h-5 bg-airasia-red rounded-full border-4 border-white shadow-sm" aria-hidden="true"></span>
+                    Phase 5: Maintenance & Improvement
+                </h3>
+                <div class="space-y-6 pl-8">
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 16: Set Up Data Syncing</h4>
+                        <p class="text-gray-700 mt-1">Your Confluence pages will change. Set up an automated (e.g., nightly) job to re-run the data pipeline (Phase 2) to keep your bot's knowledge up-to-date.</p>
+                    </div>
+                    <div class="step-item">
+                        <h4 class="text-xl font-semibold text-airasia-dark">Step 17: Monitor and Iterate</h4>
+                        <p class="text-gray-700 mt-1">Add a "thumbs up / thumbs down" feedback button to your chat UI. Log user questions and feedback to discover gaps in your knowledge base and improve your prompts.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
