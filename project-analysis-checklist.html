@@ -1111,125 +1111,118 @@
             items.forEach(item => {
                 let content = item.querySelector('.item-content');
                 if (!content) return;
-                // Remove any previously created main answer editor wrappers to enforce per-subsection only
-                const mainAnswer = content.querySelector(':scope > .answer-wrapper');
-                if (mainAnswer) mainAnswer.remove();
+                // Remove any previously created answer editors
+                const existingEditors = content.querySelectorAll('.answer-wrapper');
+                existingEditors.forEach(editor => editor.remove());
  
-                // Add editors for each subsection within this item
-                const subsections = content.querySelectorAll('.item-section');
-                let subsectionIndex = 0;
-                subsections.forEach(section => {
-                    if (section.querySelector('.answer-wrapper')) return; // already added
-                    subsectionIndex += 1;
+                // Add only ONE editor per item, placed after all subsections
+                const answerWrapper = document.createElement('div');
+                answerWrapper.className = 'answer-wrapper';
 
-                    const subWrapper = document.createElement('div');
-                    subWrapper.className = 'answer-wrapper';
+                const answerLabel = document.createElement('label');
+                answerLabel.className = 'answer-label';
+                answerLabel.textContent = 'Your Notes';
 
-                    const subLabel = document.createElement('label');
-                    subLabel.className = 'answer-label';
-                    subLabel.textContent = 'Your Notes for this subsection';
+                const editor = document.createElement('div');
+                editor.className = 'editor';
+                editor.id = 'editor-' + (item.querySelector('.item-number')?.textContent?.trim() || '');
 
-                    const subEditor = document.createElement('div');
-                    subEditor.className = 'editor';
-                    subEditor.id = 'editor-' + (item.querySelector('.item-number')?.textContent?.trim() || '') + '-' + subsectionIndex;
+                const toolbar = document.createElement('div');
+                toolbar.className = 'editor-toolbar';
+                toolbar.innerHTML = `
+                    <button type="button" class="editor-btn" data-cmd="bold"><b>B</b></button>
+                    <button type="button" class="editor-btn" data-cmd="italic"><i>I</i></button>
+                    <button type="button" class="editor-btn" data-cmd="underline"><u>U</u></button>
+                    <button type="button" class="editor-btn" data-cmd="insertUnorderedList">• List</button>
+                    <button type="button" class="editor-btn" data-cmd="insertOrderedList">1. List</button>
+                    <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="h3">H3</button>
+                    <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="blockquote">" Quote"</button>
+                    <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="pre">Code</button>
+                    <button type="button" class="editor-btn" data-cmd="createLink">Link</button>
+                    <button type="button" class="editor-btn" data-cmd="removeFormat">Clear</button>
+                `;
 
-                    const subToolbar = document.createElement('div');
-                    subToolbar.className = 'editor-toolbar';
-                    subToolbar.innerHTML = `
-                        <button type="button" class="editor-btn" data-cmd="bold"><b>B</b></button>
-                        <button type="button" class="editor-btn" data-cmd="italic"><i>I</i></button>
-                        <button type="button" class="editor-btn" data-cmd="underline"><u>U</u></button>
-                        <button type="button" class="editor-btn" data-cmd="insertUnorderedList">• List</button>
-                        <button type="button" class="editor-btn" data-cmd="insertOrderedList">1. List</button>
-                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="h3">H3</button>
-                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="blockquote">“ Quote”</button>
-                        <button type="button" class="editor-btn" data-cmd="formatBlock" data-value="pre">Code</button>
-                        <button type="button" class="editor-btn" data-cmd="createLink">Link</button>
-                        <button type="button" class="editor-btn" data-cmd="removeFormat">Clear</button>
-                    `;
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'editor-content';
+                contentDiv.contentEditable = 'true';
+                contentDiv.setAttribute('data-answer', 'true');
 
-                    const subContentDiv = document.createElement('div');
-                    subContentDiv.className = 'editor-content';
-                    subContentDiv.contentEditable = 'true';
-                    subContentDiv.setAttribute('data-answer', 'true');
+                const actions = document.createElement('div');
+                actions.className = 'editor-actions';
+                const previewBtn = document.createElement('button');
+                previewBtn.type = 'button';
+                previewBtn.className = 'preview-btn';
+                previewBtn.textContent = 'Preview';
+                actions.appendChild(previewBtn);
 
-                    const subActions = document.createElement('div');
-                    subActions.className = 'editor-actions';
-                    const subPreviewBtn = document.createElement('button');
-                    subPreviewBtn.type = 'button';
-                    subPreviewBtn.className = 'preview-btn';
-                    subPreviewBtn.textContent = 'Preview';
-                    subActions.appendChild(subPreviewBtn);
+                editor.appendChild(toolbar);
+                editor.appendChild(contentDiv);
+                editor.appendChild(actions);
 
-                    subEditor.appendChild(subToolbar);
-                    subEditor.appendChild(subContentDiv);
-                    subEditor.appendChild(subActions);
+                answerWrapper.appendChild(answerLabel);
+                answerWrapper.appendChild(editor);
+                
+                // Append the editor after all subsections
+                content.appendChild(answerWrapper);
 
-                    subWrapper.appendChild(subLabel);
-                    subWrapper.appendChild(subEditor);
-                    section.appendChild(subWrapper);
+                // Toolbar actions
+                toolbar.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.editor-btn');
+                    if (!btn) return;
+                    const cmd = btn.getAttribute('data-cmd');
+                    const value = btn.getAttribute('data-value');
+                    contentDiv.focus();
+                    if (cmd === 'createLink') {
+                        const url = prompt('Enter URL');
+                        if (url) document.execCommand('createLink', false, url);
+                        return;
+                    }
+                    if (cmd === 'formatBlock') {
+                        document.execCommand('formatBlock', false, value);
+                        return;
+                    }
+                    document.execCommand(cmd, false, null);
+                });
 
-                    // Toolbar actions for subsection
-                    subToolbar.addEventListener('click', function(e) {
-                        const btn = e.target.closest('.editor-btn');
-                        if (!btn) return;
-                        const cmd = btn.getAttribute('data-cmd');
-                        const value = btn.getAttribute('data-value');
-                        subContentDiv.focus();
-                        if (cmd === 'createLink') {
-                            const url = prompt('Enter URL');
-                            if (url) document.execCommand('createLink', false, url);
-                            return;
-                        }
-                        if (cmd === 'formatBlock') {
-                            document.execCommand('formatBlock', false, value);
-                            return;
-                        }
-                        document.execCommand(cmd, false, null);
-                    });
+                // Preview
+                previewBtn.addEventListener('click', function() {
+                    const modal = document.getElementById('previewModal');
+                    const body = document.getElementById('previewModalBody');
+                    const itemTitle = editor.closest('.checklist-item')?.querySelector('.item-question')?.textContent?.trim() || 'Answer Preview';
+                    modal.querySelector('.modal-title').textContent = itemTitle;
 
-                    // Preview for subsection
-                    subPreviewBtn.addEventListener('click', function() {
-                        const modal = document.getElementById('previewModal');
-                        const body = document.getElementById('previewModalBody');
-                        const itemTitle = subEditor.closest('.checklist-item')?.querySelector('.item-question')?.textContent?.trim() || 'Answer Preview';
-                        const subsectionTitle = subEditor.closest('.item-section')?.querySelector('.section-label')?.textContent?.trim();
-                        const title = subsectionTitle ? (itemTitle + ' — ' + subsectionTitle) : itemTitle;
-                        modal.querySelector('.modal-title').textContent = title;
-
-                        const allowed = ['B','STRONG','I','EM','U','P','BR','UL','OL','LI','H1','H2','H3','BLOCKQUOTE','PRE','CODE','A','DIV'];
-                        const clone = subContentDiv.cloneNode(true);
-                        (function sanitize(node){
-                            const kids = Array.from(node.childNodes);
-                            kids.forEach(child => {
-                                if (child.nodeType === 1) {
-                                    if (!allowed.includes(child.tagName)) {
-                                        const span = document.createElement('span');
-                                        span.innerHTML = child.innerHTML;
-                                        child.replaceWith(span);
-                                    } else {
-                                        if (child.tagName === 'A') {
-                                            const href = child.getAttribute('href') || '';
-                                            if (/^javascript:/i.test(href)) child.setAttribute('href', '#');
-                                            child.setAttribute('rel','noopener noreferrer');
-                                            child.setAttribute('target','_blank');
-                                        }
+                    const allowed = ['B','STRONG','I','EM','U','P','BR','UL','OL','LI','H1','H2','H3','BLOCKQUOTE','PRE','CODE','A','DIV'];
+                    const clone = contentDiv.cloneNode(true);
+                    (function sanitize(node){
+                        const kids = Array.from(node.childNodes);
+                        kids.forEach(child => {
+                            if (child.nodeType === 1) {
+                                if (!allowed.includes(child.tagName)) {
+                                    const span = document.createElement('span');
+                                    span.innerHTML = child.innerHTML;
+                                    child.replaceWith(span);
+                                } else {
+                                    if (child.tagName === 'A') {
+                                        const href = child.getAttribute('href') || '';
+                                        if (/^javascript:/i.test(href)) child.setAttribute('href', '#');
+                                        child.setAttribute('rel','noopener noreferrer');
+                                        child.setAttribute('target','_blank');
                                     }
-                                    sanitize(child);
                                 }
-                            });
-                        })(clone);
+                                sanitize(child);
+                            }
+                        });
+                    })(clone);
 
-                        body.innerHTML = '';
-                        let html = clone.innerHTML
-                            .replace(/<div>([\s\S]*?)<\/div>/gi, '<p>$1</p>')
-                            .replace(/<p>(?:\s|&nbsp;|<br\s*\/??>)*<\/p>/gi, '')
-                            .replace(/\n/g, '<br>');
+                    body.innerHTML = '';
+                    let html = clone.innerHTML
+                        .replace(/<div>([\s\S]*?)<\/div>/gi, '<p>$1</p>')
+                        .replace(/<p>(?:\s|&nbsp;|<br\s*\/??>)*<\/p>/gi, '')
+                        .replace(/\n/g, '<br>');
 
-                        body.innerHTML = html;
-                        modal.classList.add('active');
-                        modal.setAttribute('aria-hidden','false');
-                    });
+                    body.innerHTML = html;
+                    modal.classList.add('active');
+                    modal.setAttribute('aria-hidden','false');
                 });
             });
         }
@@ -1265,43 +1258,40 @@
                         lines.push('### ' + (num ? num + '. ' : '') + q);
                         lines.push('');
 
-                        // Subsection answers
-                        const subsections = item.querySelectorAll(':scope .item-section');
-                        subsections.forEach(sec => {
-                            const label = (sec.querySelector('.section-label')?.textContent || 'Subsection').trim();
-                            const subEditorContent = sec.querySelector('.editor-content');
-                            const sHtml = subEditorContent ? subEditorContent.innerHTML : '';
-                            const s = sHtml.trim();
-                            lines.push('#### ' + label);
-                            lines.push('');
-                            if (s.length) {
-                                let smd = s
-                                    .replace(/\n/g, '')
-                                    .replace(/<\/?p>/g, '\n\n')
-                                    .replace(/<br\s*\/?>(?=.)/g, '\n')
-                                    .replace(/<strong>|<b>/g, '**').replace(/<\/strong>|<\/b>/g, '**')
-                                    .replace(/<em>|<i>/g, '*').replace(/<\/em>|<\/i>/g, '*')
-                                    .replace(/<u>(.*?)<\/u>/g, '$1')
-                                    .replace(/<h3[^>]*>(.*?)<\/h3>/g, '### $1\n')
-                                    .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/g, function(_, c){return '> ' + c.replace(/<br\s*\/?>(?=.)/g,'\n> ').replace(/<[^>]+>/g,'') + '\n';})
-                                    .replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g, '```\n$1\n```\n')
-                                    .replace(/<pre[^>]*>([\s\S]*?)<\/pre>/g, '```\n$1\n```\n')
-                                    .replace(/<code[^>]*>([\s\S]*?)<\/code>/g, '`$1`')
-                                    .replace(/<a[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>/g, '[$2]($1)')
-                                    .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/g, function(_, c){
-                                        return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, '- $1\n').replace(/<[^>]+>/g,'');
-                                    })
-                                    .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/g, function(_, c){
-                                        let i=1; return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, ()=> (i++)+'. $1\n').replace(/<[^>]+>/g,'');
-                                    })
-                                    .replace(/<[^>]+>/g, '');
-                                smd = smd.replace(/\n{3,}/g, '\n\n').trim();
-                                lines.push(smd);
-                            } else {
-                                lines.push('_(no notes provided)_');
-                            }
-                            lines.push('');
-                        });
+                        // Single answer editor per item
+                        const editorContent = item.querySelector('.editor-content[data-answer="true"]');
+                        const answerHtml = editorContent ? editorContent.innerHTML : '';
+                        const answer = answerHtml.trim();
+                        
+                        lines.push('#### Your Notes');
+                        lines.push('');
+                        if (answer.length) {
+                            let answerMd = answer
+                                .replace(/\n/g, '')
+                                .replace(/<\/?p>/g, '\n\n')
+                                .replace(/<br\s*\/?>(?=.)/g, '\n')
+                                .replace(/<strong>|<b>/g, '**').replace(/<\/strong>|<\/b>/g, '**')
+                                .replace(/<em>|<i>/g, '*').replace(/<\/em>|<\/i>/g, '*')
+                                .replace(/<u>(.*?)<\/u>/g, '$1')
+                                .replace(/<h3[^>]*>(.*?)<\/h3>/g, '### $1\n')
+                                .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/g, function(_, c){return '> ' + c.replace(/<br\s*\/?>(?=.)/g,'\n> ').replace(/<[^>]+>/g,'') + '\n';})
+                                .replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g, '```\n$1\n```\n')
+                                .replace(/<pre[^>]*>([\s\S]*?)<\/pre>/g, '```\n$1\n```\n')
+                                .replace(/<code[^>]*>([\s\S]*?)<\/code>/g, '`$1`')
+                                .replace(/<a[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>/g, '[$2]($1)')
+                                .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/g, function(_, c){
+                                    return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, '- $1\n').replace(/<[^>]+>/g,'');
+                                })
+                                .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/g, function(_, c){
+                                    let i=1; return c.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, ()=> (i++)+'. $1\n').replace(/<[^>]+>/g,'');
+                                })
+                                .replace(/<[^>]+>/g, '');
+                            answerMd = answerMd.replace(/\n{3,}/g, '\n\n').trim();
+                            lines.push(answerMd);
+                        } else {
+                            lines.push('_(no notes provided)_');
+                        }
+                        lines.push('');
 
                         lines.push('');
                     });
