@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Web Dumps</title>
+    <meta name="description" content="Web Dumps - random reports and notes." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light dark; /* honor user preference */
+        --aa-red: #e30000;
+        --bg: #ffffff;
+        --fg: #151515;
+        --muted: #60646c;
+        --accent: var(--aa-red);
+        --card: #ffffff;
+        --border: #eaecef;
+        --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          /* Force white background even in dark mode as requested */
+          --bg: #ffffff;
+          --fg: #151515;
+          --muted: #60646c;
+          --card: #ffffff;
+          --border: #eaecef;
+          --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        }
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: var(--bg);
+        color: var(--fg);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--border);
+        background: #ffffff;
+        color: #151515;
+      }
+      .header-inner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px;
+        max-width: 1040px;
+        margin: 0 auto;
+      }
+      .logo { display: inline-flex; align-items: center; }
+      .logo img {
+        width: 36px;
+        height: 36px;
+        border-radius: 0;
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+      }
+      h1 {
+        font-size: 22px;
+        line-height: 1.2;
+        margin: 0;
+        letter-spacing: 0.2px;
+        font-weight: 700;
+      }
+      main {
+        padding: 24px 20px 48px;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+      .muted { color: var(--muted); }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.06);
+        background: #ffffff;
+        color: #111;
+        box-shadow: var(--shadow);
+      }
+      @media (prefers-color-scheme: dark) {
+        .cta {
+          background: #151923;
+          color: #f0f2f6;
+          border-color: #262a36;
+        }
+      }
+      .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        margin-top: 24px;
+      }
+      .link-card {
+        display: block;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: var(--fg);
+      }
+      .link-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+        border-color: var(--accent);
+      }
+      .link-card-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+        color: var(--fg);
+      }
+      .link-card-description {
+        font-size: 14px;
+        color: var(--muted);
+        margin: 0;
+        line-height: 1.5;
+      }
+      .link-card-url {
+        font-size: 12px;
+        color: var(--accent);
+        margin-top: 8px;
+        display: block;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      }
+      .page-header {
+        margin-bottom: 8px;
+      }
+      .page-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 4px 0;
+        color: var(--fg);
+      }
+      .page-header p {
+        font-size: 15px;
+        color: var(--muted);
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header role="banner">
+      <div class="header-inner">
+        <span class="logo" title="AirAsia">
+          <img src="https://i.imgur.com/tvZMJ0I.png" alt="AirAsia logo" width="36" height="36" />
+        </span>
+        <h1>Web Dumps</h1>
+      </div>
+    </header>
+    <main>
+      <div class="page-header">
+        <h2>Web Dumps</h2>
+        <p>Collection of reports and documentation pages</p>
+      </div>
+      <div class="links-grid" id="linksContainer">
+        <!-- Links will be dynamically generated here -->
+      </div>
+    </main>
+
+    <script>
+      // List of HTML files with their display names and descriptions
+      const pages = [
+        {
+          file: 'ai-driven-process-benchmark-report.html',
+          title: 'AI Driven Process Benchmark Report',
+          description: 'Benchmark report for AI-driven processes and performance metrics.'
+        },
+        {
+          file: 'booking-channel-builder.html',
+          title: 'Booking Channel Builder',
+          description: 'Documentation and information about the booking channel builder.'
+        },
+        {
+          file: 'gcp-request.html',
+          title: 'GCP Environment Information',
+          description: 'Information about GCP environment naming conventions, service accounts, and IAM roles.'
+        },
+        {
+          file: 'knowledge-bot.html',
+          title: 'Knowledge Bot',
+          description: 'Information and documentation about the knowledge bot system.'
+        },
+        {
+          file: 'login-panel.html',
+          title: 'Login Panel',
+          description: 'Login panel interface and documentation.'
+        },
+        {
+          file: 'nwow-prompt-log.html',
+          title: 'NWOW Prompt Log',
+          description: 'Log of prompts and interactions for NWOW system.'
+        },
+        {
+          file: 'project-analysis-checklist.html',
+          title: 'Project Analysis Checklist',
+          description: 'Checklist and guidelines for project analysis.'
+        },
+        {
+          file: 'rmx-sso-prd-config.html',
+          title: 'RMX SSO PRD Config',
+          description: 'Configuration and documentation for RMX SSO PRD.'
+        }
+      ];
+
+      // Function to format filename to display name
+      function formatTitle(filename) {
+        return filename
+          .replace('.html', '')
+          .replace(/-/g, ' ')
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+      }
+
+      // Function to create a link card element
+      function createLinkCard(page) {
+        const card = document.createElement('a');
+        card.href = page.file;
+        card.className = 'link-card';
+        
+        const title = document.createElement('div');
+        title.className = 'link-card-title';
+        title.textContent = page.title || formatTitle(page.file);
+        
+        const description = document.createElement('div');
+        description.className = 'link-card-description';
+        description.textContent = page.description || `View ${page.title || formatTitle(page.file)}`;
+        
+        const url = document.createElement('span');
+        url.className = 'link-card-url';
+        url.textContent = page.file;
+        
+        card.appendChild(title);
+        card.appendChild(description);
+        card.appendChild(url);
+        
+        return card;
+      }
+
+      // Function to dynamically add links
+      function renderLinks() {
+        const container = document.getElementById('linksContainer');
+        
+        if (!container) return;
+        
+        // Clear existing content
+        container.innerHTML = '';
+        
+        // Add each page as a link card
+        pages.forEach(page => {
+          const card = createLinkCard(page);
+          container.appendChild(card);
+        });
+        
+        // If no pages found, show a message
+        if (pages.length === 0) {
+          container.innerHTML = '<p class="muted">No pages available.</p>';
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', renderLinks);
+      
+      // Also run immediately in case DOM is already loaded
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderLinks);
+      } else {
+        renderLinks();
+      }
+    </script>
+  </body>
+</html>
+
