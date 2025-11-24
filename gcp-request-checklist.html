@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GCP Provisioning Checklist - AirAsia</title>
+    <meta name="description" content="IT Ops Checklist for provisioning GCP environments" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light dark;
+            --aa-red: #e30000;
+            --bg: #ffffff;
+            --fg: #151515;
+            --muted: #60646c;
+            --accent: var(--aa-red);
+            --card: #ffffff;
+            --border: #eaecef;
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            --success: #10b981;
+            --code-bg: #f8f9fa;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #ffffff;
+                --fg: #151515;
+                --muted: #60646c;
+                --card: #ffffff;
+                --border: #eaecef;
+                --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Inter, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid var(--border);
+            background: #ffffff;
+            box-shadow: var(--shadow);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            max-width: 1040px;
+            margin: 0 auto;
+            justify-content: space-between;
+        }
+
+        .logo img {
+            width: 36px;
+            height: 36px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        main {
+            padding: 32px 20px 48px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s;
+            background: #ffffff;
+            /* Force white background */
+            color: var(--fg);
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(227, 0, 0, 0.1);
+        }
+
+        .checklist-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--fg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .select-all-container:hover {
+            color: var(--fg);
+        }
+
+        .select-all-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            cursor: pointer;
+            background: #ffffff;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .select-all-checkbox:checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .select-all-checkbox:checked::after {
+            content: '';
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+            margin-top: -1px;
+        }
+
+        .select-all-checkbox:indeterminate {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .select-all-checkbox:indeterminate::after {
+            content: '';
+            width: 10px;
+            height: 2.5px;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: var(--card);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .task-item:hover {
+            border-color: #ccc;
+            box-shadow: var(--shadow);
+        }
+
+        .task-item.completed {
+            background: #f0fdf4;
+            border-color: var(--success);
+        }
+
+        .task-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            flex-shrink: 0;
+            position: relative;
+            cursor: pointer;
+            background: #ffffff;
+            /* Force white background */
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-checkbox:checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .task-checkbox:checked::after {
+            content: '';
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+            margin-top: -2px;
+            /* Fine-tune position */
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .task-desc {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            color: var(--accent);
+            word-break: break-all;
+            cursor: pointer;
+        }
+
+        code:hover {
+            background: #eef0f2;
+        }
+
+        code::after {
+            content: "📋";
+            font-size: 10px;
+            margin-left: 4px;
+            opacity: 0.5;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 100;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--bg);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .env-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .env-badge-dev {
+            background: #0ea5e9;
+        }
+
+        .env-badge-stg {
+            background: #f59e0b;
+        }
+
+        .env-badge-prd {
+            background: #e30000;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--muted);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .cli-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c70000;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border-color: var(--border);
+            color: var(--fg);
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .btn-env {
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-env:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-env:active {
+            transform: translateY(0);
+        }
+
+        .btn-env-dev {
+            background: #0ea5e9;
+        }
+
+        .btn-env-stg {
+            background: #f59e0b;
+        }
+
+        .btn-env-prd {
+            background: #e30000;
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        .action-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 48px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .action-section h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: var(--fg);
+        }
+
+        .section-divider {
+            border-top: 2px solid var(--border);
+            margin: 32px 0;
+            padding-top: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .btn-env {
+                font-size: 14px;
+                padding: 14px 16px;
+                min-width: 100% !important;
+            }
+
+            .action-section {
+                padding: 24px;
+                margin-top: 32px;
+            }
+
+            .action-section h2 {
+                font-size: 20px;
+            }
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block !important;
+            }
+
+            .print-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 20px;
+                border-bottom: 3px solid #e30000;
+                margin-bottom: 20px;
+            }
+
+            .print-header h1 {
+                font-size: 24px;
+                margin: 0;
+            }
+
+            .print-header .project-info {
+                font-size: 14px;
+                color: #333;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+
+            body {
+                background: white;
+            }
+
+            main {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            /* Hide input card in print */
+            .card .input-group {
+                display: none !important;
+            }
+
+            .checklist-section {
+                page-break-inside: avoid;
+                margin-bottom: 24px;
+            }
+
+            .task-item {
+                page-break-inside: avoid;
+                border: 1px solid #ddd !important;
+                background: white !important;
+            }
+
+            .task-item.completed {
+                background: #f0fdf4 !important;
+                border-color: #10b981 !important;
+            }
+
+            /* Ensure checkboxes are visible in print */
+            .task-checkbox,
+            .select-all-checkbox {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                background: white !important;
+                border: 2px solid #333 !important;
+            }
+
+            .task-checkbox:checked,
+            .select-all-checkbox:checked {
+                background: #10b981 !important;
+                border-color: #10b981 !important;
+            }
+
+            .task-checkbox:checked::after,
+            .select-all-checkbox:checked::after {
+                display: block !important;
+                border-color: white !important;
+            }
+
+            .select-all-checkbox:indeterminate {
+                background: #e30000 !important;
+                border-color: #e30000 !important;
+            }
+
+            .select-all-checkbox:indeterminate::after {
+                background: white !important;
+            }
+
+            /* Print the section titles properly */
+            .section-title {
+                page-break-after: avoid;
+            }
+
+            /* Ensure code blocks are readable */
+            code {
+                background: #f0f0f0 !important;
+                border: 1px solid #ddd !important;
+                word-break: break-all;
+            }
+
+            code::after {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <header class="no-print">
+        <div class="header-inner">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span class="logo"><img src="https://i.imgur.com/tvZMJ0I.png" alt="AirAsia"></span>
+                <h1>GCP Provisioning Checklist</h1>
+            </div>
+            <div style="display:flex; align-items:center; gap:16px;">
+                <div style="font-weight:600; font-size:14px;">
+                    <span id="completedCount">0</span>/<span id="totalCount">0</span> Completed
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Print-only header -->
+    <div class="print-only print-header">
+        <div>
+            <h1>GCP Provisioning Checklist</h1>
+            <div class="project-info">
+                Project: <strong><span id="printProjectName">[Project Name]</span></strong>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 12px; color: #666;">Generated on: <span id="printDate"></span></div>
+            <div style="font-size: 14px; font-weight: 600; margin-top: 4px;">
+                <span id="printCompletedCount">0</span>/<span id="printTotalCount">0</span> Tasks Completed
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <div class="card">
+            <div class="input-group">
+                <label for="projectName">Project Name Base</label>
+                <input type="text" id="projectName" placeholder="e.g. booking-service" autofocus>
+                <div style="font-size:13px; color:var(--muted); margin-top:4px;">
+                    Enter the base name of the project. Environment suffixes (-dev, -stg, -prd) will be appended
+                    automatically.
+                </div>
+            </div>
+        </div>
+
+        <div class="checklist-section" data-phase="phase1">
+            <div class="section-title">
+                Phase 1: Project Creation
+                <label class="select-all-container">
+                    <input type="checkbox" class="select-all-checkbox" data-phase="phase1">
+                    <span>Select All</span>
+                </label>
+            </div>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud projects create airasia-[name]-dev --name='AirAsia [name] DEV'">
+                <div class="task-content">
+                    <div class="task-title">Create Development Project</div>
+                    <div class="task-desc">Create project: <code class="dynamic-project"
+                            data-suffix="-dev">airasia-[name]-dev</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud projects create airasia-[name]-stg --name='AirAsia [name] STG'">
+                <div class="task-content">
+                    <div class="task-title">Create Staging Project</div>
+                    <div class="task-desc">Create project: <code class="dynamic-project"
+                            data-suffix="-stg">airasia-[name]-stg</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud projects create airasia-[name]-prd --name='AirAsia [name] PRD'">
+                <div class="task-content">
+                    <div class="task-title">Create Production Project</div>
+                    <div class="task-desc">Create project: <code class="dynamic-project"
+                            data-suffix="-prd">airasia-[name]-prd</code></div>
+                </div>
+            </label>
+        </div>
+
+        <div class="checklist-section" data-phase="phase2">
+            <div class="section-title">
+                Phase 2: Enable APIs (All Environments)
+                <label class="select-all-container">
+                    <input type="checkbox" class="select-all-checkbox" data-phase="phase2">
+                    <span>Select All</span>
+                </label>
+            </div>
+            <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">Run for DEV, STG, and PRD projects.
+            </div>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud services enable run.googleapis.com --project=airasia-[name]-dev && gcloud services enable run.googleapis.com --project=airasia-[name]-stg && gcloud services enable run.googleapis.com --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Enable Cloud Run Admin API</div>
+                    <div class="task-desc"><code>gcloud services enable run.googleapis.com</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-dev && gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-stg && gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Enable Artifact Registry API</div>
+                    <div class="task-desc"><code>gcloud services enable artifactregistry.googleapis.com</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-dev && gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-stg && gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Enable Cloud Build API</div>
+                    <div class="task-desc"><code>gcloud services enable cloudbuild.googleapis.com</code></div>
+                </div>
+            </label>
+        </div>
+
+        <div class="checklist-section" data-phase="phase3">
+            <div class="section-title">
+                Phase 3: Service Accounts
+                <label class="select-all-container">
+                    <input type="checkbox" class="select-all-checkbox" data-phase="phase3">
+                    <span>Select All</span>
+                </label>
+            </div>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud iam service-accounts create sa-dev --display-name='Service Account DEV' --project=airasia-[name]-dev">
+                <div class="task-content">
+                    <div class="task-title">Create DEV Service Account</div>
+                    <div class="task-desc">Name: <code>sa-dev</code> Email: <code class="dynamic-sa"
+                            data-env="dev">sa-dev@airasia-[name]-dev.iam.gserviceaccount.com</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud iam service-accounts create sa-stg --display-name='Service Account STG' --project=airasia-[name]-stg">
+                <div class="task-content">
+                    <div class="task-title">Create STG Service Account</div>
+                    <div class="task-desc">Name: <code>sa-stg</code> Email: <code class="dynamic-sa"
+                            data-env="stg">sa-stg@airasia-[name]-stg.iam.gserviceaccount.com</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud iam service-accounts create sa-prd --display-name='Service Account PRD' --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Create PRD Service Account</div>
+                    <div class="task-desc">Name: <code>sa-prd</code> Email: <code class="dynamic-sa"
+                            data-env="prd">sa-prd@airasia-[name]-prd.iam.gserviceaccount.com</code></div>
+                </div>
+            </label>
+        </div>
+
+        <div class="checklist-section" data-phase="phase4">
+            <div class="section-title">
+                Phase 4: <span class="dynamic-project-base">[name]</span> IAM Roles
+                <label class="select-all-container">
+                    <input type="checkbox" class="select-all-checkbox" data-phase="phase4">
+                    <span>Select All</span>
+                </label>
+            </div>
+            <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">Assign these roles to the service
+                accounts created above.</div>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/artifactregistry.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/artifactregistry.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/artifactregistry.admin'">
+                <div class="task-content">
+                    <div class="task-title">Artifact Registry Administrator</div>
+                    <div class="task-desc">Role: <code>roles/artifactregistry.admin</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/artifactregistry.reader' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/artifactregistry.reader' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/artifactregistry.reader'">
+                <div class="task-content">
+                    <div class="task-title">Artifact Registry Reader</div>
+                    <div class="task-desc">Role: <code>roles/artifactregistry.reader</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/artifactregistry.writer' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/artifactregistry.writer' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/artifactregistry.writer'">
+                <div class="task-content">
+                    <div class="task-title">Artifact Registry Writer</div>
+                    <div class="task-desc">Role: <code>roles/artifactregistry.writer</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudbuild.builds.editor' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudbuild.builds.editor' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudbuild.builds.editor'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Build Editor</div>
+                    <div class="task-desc">Role: <code>roles/cloudbuild.builds.editor</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudbuild.serviceAgent' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudbuild.serviceAgent' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudbuild.serviceAgent'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Build Service Account User</div>
+                    <div class="task-desc">Role: <code>roles/cloudbuild.serviceAgent</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudbuild.workerPoolUser' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudbuild.workerPoolUser' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudbuild.workerPoolUser'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Build WorkerPool User</div>
+                    <div class="task-desc">Role: <code>roles/cloudbuild.workerPoolUser</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudkms.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudkms.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudkms.admin'">
+                <div class="task-content">
+                    <div class="task-title">Cloud KMS Admin</div>
+                    <div class="task-desc">Role: <code>roles/cloudkms.admin</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyDecrypter' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyDecrypter' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyDecrypter'">
+                <div class="task-content">
+                    <div class="task-title">Cloud KMS CryptoKey Decrypter</div>
+                    <div class="task-desc">Role: <code>roles/cloudkms.cryptoKeyDecrypter</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyEncrypter' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyEncrypter' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyEncrypter'">
+                <div class="task-content">
+                    <div class="task-title">Cloud KMS CryptoKey Encrypter</div>
+                    <div class="task-desc">Role: <code>roles/cloudkms.cryptoKeyEncrypter</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/run.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/run.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/run.admin'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Run Admin</div>
+                    <div class="task-desc">Role: <code>roles/run.admin</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/run.invoker' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/run.invoker' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/run.invoker'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Run Invoker</div>
+                    <div class="task-desc">Role: <code>roles/run.invoker</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/run.serviceAgent' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/run.serviceAgent' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/run.serviceAgent'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Run Service Agent</div>
+                    <div class="task-desc">Role: <code>roles/run.serviceAgent</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudtasks.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudtasks.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudtasks.admin'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Tasks Admin (Beta)</div>
+                    <div class="task-desc">Role: <code>roles/cloudtasks.admin</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudtasks.enqueuer' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudtasks.enqueuer' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudtasks.enqueuer'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Tasks Enqueuer</div>
+                    <div class="task-desc">Role: <code>roles/cloudtasks.enqueuer</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/logging.logWriter' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/logging.logWriter' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/logging.logWriter'">
+                <div class="task-content">
+                    <div class="task-title">Logs Writer</div>
+                    <div class="task-desc">Role: <code>roles/logging.logWriter</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/secretmanager.secretAccessor' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/secretmanager.secretAccessor' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/secretmanager.secretAccessor'">
+                <div class="task-content">
+                    <div class="task-title">Secret Manager Secret Accessor</div>
+                    <div class="task-desc">Role: <code>roles/secretmanager.secretAccessor</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/iam.serviceAccountAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/iam.serviceAccountAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/iam.serviceAccountAdmin'">
+                <div class="task-content">
+                    <div class="task-title">Service Account Admin</div>
+                    <div class="task-desc">Role: <code>roles/iam.serviceAccountAdmin</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/storage.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/storage.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/storage.admin'">
+                <div class="task-content">
+                    <div class="task-title">Storage Admin</div>
+                    <div class="task-desc">Role: <code>roles/storage.admin</code></div>
+                </div>
+            </label>
+        </div>
+
+        <div class="checklist-section" data-phase="phase5">
+            <div class="section-title">
+                Phase 5: Compute Engine Default Service Account Roles
+                <label class="select-all-container">
+                    <input type="checkbox" class="select-all-checkbox" data-phase="phase5">
+                    <span>Select All</span>
+                </label>
+            </div>
+            <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">
+                Assign these roles to the Compute Engine default service account for each environment.<br>
+                Format: <code>{PROJECT_NUMBER}-compute@developer.gserviceaccount.com</code><br>
+                <em>Note: Replace [PROJECT_NUMBER_DEV], [PROJECT_NUMBER_STG], [PROJECT_NUMBER_PRD] with actual project numbers.</em>
+            </div>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:[PROJECT_NUMBER_DEV]-compute@developer.gserviceaccount.com' --role='roles/storage.objectAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:[PROJECT_NUMBER_STG]-compute@developer.gserviceaccount.com' --role='roles/storage.objectAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:[PROJECT_NUMBER_PRD]-compute@developer.gserviceaccount.com' --role='roles/storage.objectAdmin'">
+                <div class="task-content">
+                    <div class="task-title">Storage Object Admin</div>
+                    <div class="task-desc">Role: <code>roles/storage.objectAdmin</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:[PROJECT_NUMBER_DEV]-compute@developer.gserviceaccount.com' --role='roles/cloudbuild.builds.builder' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:[PROJECT_NUMBER_STG]-compute@developer.gserviceaccount.com' --role='roles/cloudbuild.builds.builder' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:[PROJECT_NUMBER_PRD]-compute@developer.gserviceaccount.com' --role='roles/cloudbuild.builds.builder'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Build Builds Builder</div>
+                    <div class="task-desc">Role: <code>roles/cloudbuild.builds.builder</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:[PROJECT_NUMBER_DEV]-compute@developer.gserviceaccount.com' --role='roles/run.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:[PROJECT_NUMBER_STG]-compute@developer.gserviceaccount.com' --role='roles/run.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:[PROJECT_NUMBER_PRD]-compute@developer.gserviceaccount.com' --role='roles/run.admin'">
+                <div class="task-content">
+                    <div class="task-title">Cloud Run Admin (Compute Engine SA)</div>
+                    <div class="task-desc">Role: <code>roles/run.admin</code></div>
+                </div>
+            </label>
+        </div>
+
+        <!-- Action Buttons Section -->
+        <div class="action-section no-print">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <h2>Generate Scripts & Export</h2>
+                <p style="color: var(--muted); font-size: 14px; margin: 0;">
+                    Select tasks above and generate environment-specific CLI scripts or export as PDF
+                </p>
+            </div>
+
+            <div style="margin-bottom: 32px;">
+                <div style="font-size: 15px; font-weight: 600; margin-bottom: 16px; color: var(--fg);">
+                    📜 Generate Environment Scripts
+                </div>
+                <div style="display:flex; gap:12px; flex-wrap: wrap;">
+                    <button class="btn-env btn-env-dev" onclick="generateCLI('dev')" style="flex: 1; min-width: 200px;">
+                        🔧 DEV CLI
+                        <div style="font-size: 11px; opacity: 0.9; font-weight: 400; margin-top: 2px;">Development</div>
+                    </button>
+                    <button class="btn-env btn-env-stg" onclick="generateCLI('stg')" style="flex: 1; min-width: 200px;">
+                        ⚙️ STG CLI
+                        <div style="font-size: 11px; opacity: 0.9; font-weight: 400; margin-top: 2px;">Staging</div>
+                    </button>
+                    <button class="btn-env btn-env-prd" onclick="generateCLI('prd')" style="flex: 1; min-width: 200px;">
+                        🚀 PRD CLI
+                        <div style="font-size: 11px; opacity: 0.9; font-weight: 400; margin-top: 2px;">Production</div>
+                    </button>
+                </div>
+                <div style="font-size:13px; color:var(--muted); margin-top:12px; text-align: center;">
+                    Click an environment button to generate gcloud CLI commands for that specific environment
+                </div>
+            </div>
+
+            <div class="section-divider">
+                <div style="font-size: 15px; font-weight: 600; margin-bottom: 16px; color: var(--fg);">
+                    📄 Export Checklist
+                </div>
+                <button class="btn btn-secondary" onclick="generatePDF()" 
+                    style="width: 100%; padding: 16px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span style="font-size: 20px;">📥</span>
+                    Generate PDF Report
+                </button>
+                <div style="font-size:13px; color:var(--muted); margin-top:12px; text-align: center;">
+                    Export your checklist with all selections as a PDF document
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- CLI Modal -->
+    <div class="modal-overlay" id="cliModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Generated gcloud CLI Script</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="cli-output" id="cliOutput"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="copyCLI()">Copy to Clipboard</button>
+                <button class="btn btn-primary" onclick="closeModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Declare functions at global scope
+        function generatePDF() {
+            // Update print header with current values
+            const baseName = document.getElementById('projectName').value.trim() || '[Project Name]';
+            document.getElementById('printProjectName').textContent = baseName;
+            
+            const completed = document.querySelectorAll('.task-checkbox:checked').length;
+            const total = document.querySelectorAll('.task-checkbox').length;
+            document.getElementById('printCompletedCount').textContent = completed;
+            document.getElementById('printTotalCount').textContent = total;
+            
+            // Add current date
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('printDate').textContent = dateStr;
+            
+            // Trigger print
+            window.print();
+        }
+
+        function generateCLI(environment) {
+            const baseName = document.getElementById('projectName').value.trim() || '[name]';
+            const envUpper = environment.toUpperCase();
+            const envLabel = { 'dev': 'Development', 'stg': 'Staging', 'prd': 'Production' }[environment];
+            
+            let script = `#!/bin/bash\n# GCP Provisioning Script for ${baseName} - ${envLabel} Environment\n# Generated: ${new Date().toLocaleString()}\n\n`;
+            script += `# Set default project\ngcloud config set project airasia-${baseName}-${environment}\n\n`;
+
+            document.querySelectorAll('.task-checkbox').forEach(cb => {
+                if (cb.checked && cb.dataset.cli) {
+                    let command = cb.dataset.cli;
+                    
+                    // Extract only the command for the specified environment
+                    if (command.includes('&&')) {
+                        // Split by && and find the command for this environment
+                        const commands = command.split('&&').map(c => c.trim());
+                        const envCommand = commands.find(c => c.includes(`-${environment}`) || c.includes(`=${environment}`));
+                        if (envCommand) {
+                            command = envCommand.replace(/\[name\]/g, baseName);
+                            // Replace project number placeholders
+                            command = command.replace(/\[PROJECT_NUMBER_DEV\]/g, '[PROJECT_NUMBER]');
+                            command = command.replace(/\[PROJECT_NUMBER_STG\]/g, '[PROJECT_NUMBER]');
+                            command = command.replace(/\[PROJECT_NUMBER_PRD\]/g, '[PROJECT_NUMBER]');
+                            script += `${command}\n\n`;
+                        }
+                    } else {
+                        // Single command - check if it's for this environment
+                        if (command.includes(`-${environment}`) || command.includes(`=${environment}`)) {
+                            command = command.replace(/\[name\]/g, baseName);
+                            // Replace project number placeholders
+                            command = command.replace(/\[PROJECT_NUMBER_DEV\]/g, '[PROJECT_NUMBER]');
+                            command = command.replace(/\[PROJECT_NUMBER_STG\]/g, '[PROJECT_NUMBER]');
+                            command = command.replace(/\[PROJECT_NUMBER_PRD\]/g, '[PROJECT_NUMBER]');
+                            script += `${command}\n\n`;
+                        } else if (command.startsWith('#')) {
+                            // Include comments regardless of environment
+                            script += `${command}\n\n`;
+                        }
+                    }
+                }
+            });
+
+            if (script.split('\n').filter(line => line && !line.startsWith('#')).length <= 1) {
+                script += "\n# No items selected or no CLI commands available for this environment.";
+            } else {
+                script += `\necho "✅ ${envLabel} environment provisioning complete!"\n`;
+            }
+
+            // Update modal title with environment badge
+            const modalTitle = document.querySelector('.modal-title');
+            modalTitle.innerHTML = `Generated gcloud CLI Script <span class="env-badge env-badge-${environment}">${envUpper}</span>`;
+            document.getElementById('cliOutput').textContent = script;
+            document.getElementById('cliModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('cliModal').classList.remove('open');
+        }
+
+        function copyCLI() {
+            const cliOutput = document.getElementById('cliOutput');
+            navigator.clipboard.writeText(cliOutput.textContent).then(() => {
+                const btn = document.querySelector('.modal-footer .btn-secondary');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = originalText, 2000);
+            });
+        }
+
+        // Initialize when DOM is ready
+        const projectNameInput = document.getElementById('projectName');
+        const dynamicProjects = document.querySelectorAll('.dynamic-project');
+        const dynamicSAs = document.querySelectorAll('.dynamic-sa');
+        const checkboxes = document.querySelectorAll('.task-checkbox');
+        const completedCountSpan = document.getElementById('completedCount');
+        const totalCountSpan = document.getElementById('totalCount');
+        const progressBar = document.getElementById('progressBar');
+        const cliModal = document.getElementById('cliModal');
+        const cliOutput = document.getElementById('cliOutput');
+
+        totalCountSpan.textContent = checkboxes.length;
+
+        function updateDynamicText() {
+            const baseName = projectNameInput.value.trim() || '[name]';
+
+            document.querySelectorAll('.dynamic-project-base').forEach(el => {
+                el.textContent = baseName;
+            });
+
+            dynamicProjects.forEach(el => {
+                const suffix = el.dataset.suffix;
+                el.textContent = `airasia-${baseName}${suffix}`;
+            });
+
+            dynamicSAs.forEach(el => {
+                const env = el.dataset.env;
+                el.textContent = `sa-${env}@airasia-${baseName}-${env}.iam.gserviceaccount.com`;
+            });
+        }
+
+        function updateProgress() {
+            const completed = document.querySelectorAll('.task-checkbox:checked').length;
+            const total = checkboxes.length;
+            const percent = (completed / total) * 100;
+
+            completedCountSpan.textContent = completed;
+            progressBar.style.width = `${percent}%`;
+
+            checkboxes.forEach(cb => {
+                const item = cb.closest('.task-item');
+                if (cb.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Copy to clipboard functionality for code blocks
+        document.querySelectorAll('code').forEach(codeBlock => {
+            codeBlock.addEventListener('click', () => {
+                navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                    const original = codeBlock.style.backgroundColor;
+                    codeBlock.style.backgroundColor = '#dcfce7'; // Light green
+                    setTimeout(() => {
+                        codeBlock.style.backgroundColor = original;
+                    }, 200);
+                });
+            });
+        });
+
+        projectNameInput.addEventListener('input', updateDynamicText);
+        checkboxes.forEach(cb => cb.addEventListener('change', updateProgress));
+
+        // Select All functionality
+        document.querySelectorAll('.select-all-checkbox').forEach(selectAllCb => {
+            selectAllCb.addEventListener('change', function() {
+                const phase = this.dataset.phase;
+                const phaseSection = document.querySelector(`.checklist-section[data-phase="${phase}"]`);
+                const taskCheckboxes = phaseSection.querySelectorAll('.task-checkbox');
+                
+                taskCheckboxes.forEach(cb => {
+                    cb.checked = this.checked;
+                });
+                
+                updateProgress();
+            });
+        });
+
+        // Update select-all checkbox state when individual tasks are checked/unchecked
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                const phaseSection = this.closest('.checklist-section');
+                if (phaseSection) {
+                    const phase = phaseSection.dataset.phase;
+                    const selectAllCb = phaseSection.querySelector('.select-all-checkbox');
+                    const taskCheckboxes = phaseSection.querySelectorAll('.task-checkbox');
+                    const allChecked = Array.from(taskCheckboxes).every(checkbox => checkbox.checked);
+                    const noneChecked = Array.from(taskCheckboxes).every(checkbox => !checkbox.checked);
+                    
+                    if (allChecked) {
+                        selectAllCb.checked = true;
+                        selectAllCb.indeterminate = false;
+                    } else if (noneChecked) {
+                        selectAllCb.checked = false;
+                        selectAllCb.indeterminate = false;
+                    } else {
+                        selectAllCb.indeterminate = true;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
