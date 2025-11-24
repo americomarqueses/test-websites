@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BTS Prompt Cheat Sheet - AirAsia BTS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --aa-red: #D70018; }
+    body { font-family: 'Inter', sans-serif; }
+    .card { background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; }
+    thead th { position: sticky; top: 0; background: #fff; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    
+    /* Category badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-html { background-color: #10b981; color: white; }
+    .badge-nextjs { background-color: #3b82f6; color: white; }
+    .badge-api { background-color: #f59e0b; color: white; }
+    .badge-database { background-color: #8b5cf6; color: white; }
+    .badge-docs { background-color: #6b7280; color: white; }
+    
+    /* Prompt content */
+    .prompt-content {
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.6;
+      color: #1f2937;
+    }
+    .prompt-content.collapsed {
+      max-height: 100px;
+      overflow: hidden;
+      position: relative;
+    }
+    .prompt-content.collapsed::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, white);
+    }
+    .expand-toggle {
+      color: #3b82f6;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      display: inline-block;
+    }
+    .expand-toggle:hover {
+      text-decoration: underline;
+    }
+    
+    /* Result styling */
+    .result-content {
+      background-color: #f0fdf4;
+      border: 1px solid #86efac;
+      padding: 0.875rem;
+      border-radius: 0.5rem;
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      color: #166534;
+      line-height: 1.6;
+      position: relative;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .result-content::before {
+      content: "✓ LLM Response";
+      display: block;
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #059669;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    /* Orange marked rows */
+    .row-marked {
+      background-color: #ffe4d1 !important;
+      transition: background-color 0.2s ease;
+    }
+    .row-marked:hover {
+      background-color: #fff5ed !important;
+    }
+    .row-marked:hover td {
+      font-weight: 600;
+    }
+    
+    /* Filter controls */
+    .filter-controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      background: white;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+    .filter-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    
+    /* Search */
+    .search-box {
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      width: 100%;
+      font-size: 0.875rem;
+    }
+    .search-box:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Row visibility */
+    .row-hidden {
+      display: none;
+    }
+    
+    /* Stats */
+    .stats {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex items-center gap-4">
+      <img src="https://i.imgur.com/tvZMJ0I.png" alt="AirAsia" class="h-10 w-auto" />
+      <div>
+        <h1 class="text-2xl font-extrabold tracking-tight" style="color: #374151;">BTS Prompt Cheat Sheet</h1>
+        <p class="text-sm" style="color: #374151;">Historical prompts and concise outcomes - Interactive view with filtering and search</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8"> 
+    <section class="card p-6">
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-2">Consolidated Prompts and Results</h2>
+        <p class="text-sm text-gray-500 mb-4">Ordered by sequence; exact prompts preserved. Use filters and search to navigate.</p>
+        
+        <!-- Search -->
+        <div class="mb-4">
+          <input type="text" id="searchInput" class="search-box" placeholder="Search prompts and results...">
+        </div>
+        
+        <!-- Filters -->
+        <div class="filter-controls">
+          <button class="filter-btn active" data-category="all">All</button>
+          <button class="filter-btn" data-category="html">HTML/UI</button>
+          <button class="filter-btn" data-category="docs">Documentation</button>
+          <button class="filter-btn" data-category="nextjs">Next.js</button>
+          <button class="filter-btn" data-category="api">API</button>
+          <button class="filter-btn" data-category="database">Database</button>
+        </div>
+        
+        <div class="stats mb-4">
+          <span id="statsText">Showing all 56 prompts</span>
+        </div>
+      </div>
+      
+      <div class="overflow-x-auto border rounded-lg">
+        <table class="min-w-full text-sm">
+          <colgroup>
+            <col class="w-16" />
+            <col class="w-32" />
+            <col />
+            <col class="w-96" />
+          </colgroup>
+          <thead class="border-b bg-gray-50">
+            <tr class="text-left text-gray-700">
+              <th class="px-4 py-3 font-semibold">#</th>
+              <th class="px-4 py-3 font-semibold">Category</th>
+              <th class="px-4 py-3 font-semibold">Prompt</th>
+              <th class="px-4 py-3 font-semibold">Result</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y bg-white" id="promptsTableBody">
+            <tr id="row-1" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">1</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="create a html mockup of an based on [FSD]. make sure to use AirAsia logo and theme. refer to @https://i.imgur.com/tvZMJ0I.png for logo. make sure to use modern approach, design, and fonts. create the html mockup in folder @100-html-output/">create a html mockup of an based on [FSD]. make sure to use AirAsia logo and theme. refer to @https://i.imgur.com/tvZMJ0I.png for logo. make sure to use modern approach, design, and fonts. create the html mockup in folder @100-html-output/</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created initial HTML mockup with AirAsia branding, modern design using Tailwind CSS, and Inter font.</div>
+              </td>
+            </tr>
+            <tr id="row-2" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">2</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="All Casses and Reports module are missing. Refer to documentation @Functional Specification Document (LLM) v1.0 [BTS].md">All Casses and Reports module are missing. Refer to documentation @Functional Specification Document (LLM) v1.0 [BTS].md</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created `cases.html` and `reports.html` pages with filtering, search, and analytics features as per the FSD.</div>
+              </td>
+            </tr>
+            <tr id="row-3" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">3</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="the title page background should be standrdised, title is Baggage Tracing System">the title page background should be standrdised, title is Baggage Tracing System</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated header background to be consistent.</div>
+              </td>
+            </tr>
+            <tr id="row-4" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">4</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="it should be white">it should be white</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Changed all header backgrounds from AirAsia red (`bg-red-600`) to white (`bg-white`) and adjusted text colors accordingly.</div>
+              </td>
+            </tr>
+            <tr id="row-5" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">5</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="the navigation bar should be standard across all pages, refer to @index.html">the navigation bar should be standard across all pages, refer to @index.html</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Standardized navigation bar to include all 5 links (Dashboard, Create PIR, Baggage Tracing, All Cases, Reports) across all pages with consistent styling.</div>
+              </td>
+            </tr>
+            <tr id="row-6" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">6</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="Logout button should be a in a dropdown link when i hover in profile, make this standard across all pages">Logout button should be a in a dropdown link when i hover in profile, make this standard across all pages</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Replaced logout buttons with a JavaScript-enabled profile dropdown menu that appears on hover, containing user details, profile settings, preferences, and logout link. Applied to all pages.</div>
+              </td>
+            </tr>
+            <tr id="row-7" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">7</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="generate the mockup for step 2. Form validation passed! In a real application, this would proceed to Step 2: Baggage Details.">generate the mockup for step 2. Form validation passed! In a real application, this would proceed to Step 2: Baggage Details.</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created `create-pir-step2.html` with: Progress indicator showing Step 2 of 4, Baggage details form fields (Type, Tag Number, Weight, Size, Color, Brand, Description), Photo upload functionality, Primary Irregularity Code selection, Form validation, Navigation to Step 4 (Review & Submit)</div>
+              </td>
+            </tr>
+            <tr id="row-8" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">8</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="page 4 is missing. Form validation passed! In a real application, this would proceed to Step 4: Review & Submit.">page 4 is missing. Form validation passed! In a real application, this would proceed to Step 4: Review & Submit.</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created `create-pir-step4.html` with: Progress indicator showing all 4 steps completed, Review sections for Flight Details, Guest Details, PIR Category, and Baggage Details, Edit links to go back to previous steps, Submit button with success modal, PIR ID generation and display</div>
+              </td>
+            </tr>
+            <tr id="row-9" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">9</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="Central Baggage Tracing Office (CBTO) subtitle is wrong on @index.html . change it to Dashboard">Central Baggage Tracing Office (CBTO) subtitle is wrong on @index.html . change it to Dashboard</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated the subtitle in `index.html` header from "Central Baggage Tracing Office (CBTO)" to "Dashboard".</div>
+              </td>
+            </tr>
+            <tr id="row-10" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">10</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="make sure all pages are mobile friendly">make sure all pages are mobile friendly</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated all 8 HTML pages with: Responsive headers that stack on mobile, Scrollable navigation menu on mobile, Mobile-friendly progress indicators (simplified on mobile), Full-width buttons on mobile, Responsive padding and spacing, Touch-friendly button sizes (minimum 44px), Hidden scrollbars for horizontal scrolling, Proper text scaling for mobile devices</div>
+              </td>
+            </tr>
+            <tr id="row-11" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">11</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="create mockup data for all information required. all mockup data should be loaded from web browser local storage. all new record entered will be added in web browser local storage.">create mockup data for all information required. all mockup data should be loaded from web browser local storage. all new record entered will be added in web browser local storage.</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created comprehensive mockup data system: Files Created: `js/mockup-data.js` - Initializes local storage with sample data, `js/storage.js` - Storage management functions, `js/README.md` - Documentation for data structure. Mockup Data Includes: 8 PIR cases with complete data, 5 active tracing cases, Flight data for auto-population (5 flights), Passenger information. Features Implemented: Auto-initialization of mockup data on first load, All PIRs stored in `bts_pirs` local storage key, Tracing cases stored in `bts_tracing_cases`, Flight data stored in `bts_flights` for PNR lookup, Form submissions save to local storage, Dashboard loads statistics from local storage, All pages display data from local storage</div>
+              </td>
+            </tr>
+            <tr id="row-12" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">12</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="im getting error Uncaught TypeError: Cannot read properties of null (reading 'value')
+    at HTMLFormElement.<anonymous> (create-pir-step2.html:480:54)">im getting error Uncaught TypeError: Cannot read properties of null (reading 'value')
+    at HTMLFormElement.<anonymous> (create-pir-step2.html:480:54)</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed the error by: Using `document.querySelector('input[name="size"]:checked')` to get the selected radio button value, Adding optional chaining (`?.`) to safely access form elements, Adding fallback empty strings for all values. The `size` field is a radio button group (name="size"), not a single input with an id. The code was trying to use `getElementById('size')` which returned `null`.</div>
+              </td>
+            </tr>
+            <tr id="row-13" class="align-top" data-category="html">
+              <td class="px-4 py-3 font-medium">13</td>
+              <td class="px-4 py-3"><span class="badge badge-html">HTML</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="add proper pirs mockup data in local storage. refer to for entity properties from @Functional Specification Document (LLM) v1.0 [BTS].md . all information that will be showed will come from local storage.">add proper pirs mockup data in local storage. refer to for entity properties from @Functional Specification Document (LLM) v1.0 [BTS].md . all information that will be showed will come from local storage.</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated mockup data to match FSD entity structure. PIR_Case Table Fields include: PIR_ID, PNR, Guest_ID, Creation_Timestamp, Flight_Number, Route, Primary_Code, Secondary_Code, Status, Last_Status_Change, Created_By_User. Baggage_Details Table Fields include: Type, Tag_Number, Weight, Size, Color, Brand, Photo_Path. Updated Mockup Data: 8 PIR cases with all FSD fields properly structured, Status values: New, Primary Tracing, Secondary Tracing, Found, Lost, Closed, Weight stored as DECIMAL (number) instead of string, All field names match FSD exactly. Updated Storage Functions: Added backward compatibility for old field names, Updated all get/search/filter functions to use FSD field names, Statistics calculation uses FSD field names. Updated All HTML Pages: All pages now read from local storage using FSD field names, Form submissions create PIRs with FSD structure, Display functions support both old and new field names</div>
+              </td>
+            </tr>
+            <tr id="row-14" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">14</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="create a new next js app in @iteration-01/ named airasia-bts-web by converting @cases.html @create-pir-step2.html @create-pir-step4.html @create-pir.html @index.html @pir-detail.html @reports.html @tracing.html @README.md @js/ . refer to @Functional Specification Document (LLM) v1.0 [BTS].md . make sure that there is public and authenticated folders in the app.">create a new next js app in @iteration-01/ named airasia-bts-web by converting @cases.html @create-pir-step2.html @create-pir-step4.html @create-pir.html @index.html @pir-detail.html @reports.html @tracing.html @README.md @js/ . refer to @Functional Specification Document (LLM) v1.0 [BTS].md . make sure that there is public and authenticated folders in the app.</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created Next.js application with App Router, Converted all HTML pages to React components, Converted JavaScript utilities to TypeScript, Created reusable layout components (Header, Navigation, Footer), Set up client-side data persistence with localStorage, Implemented mockup data initialization</div>
+              </td>
+            </tr>
+            <tr id="row-15" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">15</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="wrong folder it nees to be inside @200-projects/ @iteration-01/">wrong folder it nees to be inside @200-projects/ @iteration-01/</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Moved the entire project from `airasia-gom-ai/02-project/iteration-01/airasia-bts-web` to `airasia-bts/v1/200-projects/iteration-01/airasia-bts-web`</div>
+              </td>
+            </tr>
+            <tr id="row-16" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">16</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="there is a build error">there is a build error</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed TypeScript type errors in `create-pir/step4/page.tsx` by adding explicit type annotation and `as const`, Fixed property type errors in `pir-detail/page.tsx` (removed references to non-existent properties), Fixed `getStatus` return type in `storage.ts`, Wrapped `useSearchParams()` in Suspense boundary in `pir-detail/page.tsx`</div>
+              </td>
+            </tr>
+            <tr id="row-17" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">17</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="im getting this error in browser. Console Error
+
+Use the `defaultValue` or `value` props on <select> instead of setting `selected` on <option>.">im getting this error in browser. Console Error
+
+Use the `defaultValue` or `value` props on <select> instead of setting `selected` on <option>.</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Removed `selected` attribute from `<option>` element, Added `defaultValue="month"` to `<select>` element</div>
+              </td>
+            </tr>
+            <tr id="row-18" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">18</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="the mockup data needs to confrom with the the data definitions from @Functional Specification Document (LLM) v1.0 [BTS].md">the mockup data needs to confrom with the the data definitions from @Functional Specification Document (LLM) v1.0 [BTS].md</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated Route format from `"KUL → BKK"` to `"KUL-BKK"` throughout, Removed `passenger` object from PIRCase interface, Enhanced FlightData interface to include complete guest information with Guest_ID, Updated all page components to fetch passenger data from FlightData via PNR lookup, Added missing FlightData entries for all PNRs</div>
+              </td>
+            </tr>
+            <tr id="row-19" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">19</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="/authenticated/ should not appear in the url. (authenticated) can be applied">/authenticated/ should not appear in the url. (authenticated) can be applied</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Renamed `app/authenticated/` folder to `app/(authenticated)/` (Next.js route group), Updated all route references: `/authenticated` → `/` (Dashboard), `/authenticated/cases` → `/cases`, `/authenticated/create-pir` → `/create-pir`, `/authenticated/tracing` → `/tracing`, `/authenticated/reports` → `/reports`, `/authenticated/pir-detail` → `/pir-detail`, Updated Navigation component, Updated all internal links across pages, Updated README.md documentation</div>
+              </td>
+            </tr>
+            <tr id="row-20" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">20</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="how to view dashboard">how to view dashboard</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Instructions to run `npm run dev`, Access at `http://localhost:3000`, Explanation of available routes</div>
+              </td>
+            </tr>
+            <tr id="row-21" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">21</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="shows 404">shows 404</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Removed root `app/page.tsx` redirect file, Dashboard now accessible at `/` via `app/(authenticated)/page.tsx`, Authenticated layout handles authentication check and redirects to login if needed</div>
+              </td>
+            </tr>
+            <tr id="row-22" class="align-top" data-category="nextjs">
+              <td class="px-4 py-3 font-medium">22</td>
+              <td class="px-4 py-3"><span class="badge badge-nextjs">Next.js</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="add a login page. refer to @01-login.html and capture pixel perfect ui ux. refer to @Functional Specification Document (LLM) v1.0 [BTS].md for full user persona context. create mockup data for log in.">add a login page. refer to @01-login.html and capture pixel perfect ui ux. refer to @Functional Specification Document (LLM) v1.0 [BTS].md for full user persona context. create mockup data for log in.</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created login page (`app/login/page.tsx`) with: Vanta.js clouds background effect, AirAsia branding and styling, Form validation, "Remember me" functionality, Demo credentials display. Created mockup user data (`lib/auth-data.ts`) with: MLO001, MLO002 - Missing Luggage Officers, CBTO001, CBTO002 - Central Baggage Tracing Officers, SM001, SM002 - Station Managers, FIN001 - Finance Approving Party, CHA001 - Customer Happiness Agent, All with password: `password123`. Added authentication protection: Authenticated layout checks `bts_isAuthenticated` in sessionStorage, Redirects to `/login` if not authenticated, Header component displays logged-in user info, Logout functionality. Updated routing: Root route redirects to login if not authenticated, Login redirects to dashboard after successful authentication</div>
+              </td>
+            </tr>
+            <tr id="row-23" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">23</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="create a technical documentation about entity relationship diagram for bts based on data definition from @Functional Specification Document (LLM) v1.0 [BTS].md">create a technical documentation about entity relationship diagram for bts based on data definition from @Functional Specification Document (LLM) v1.0 [BTS].md</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created comprehensive ERD documentation file `entity-relationship-diagram.md` in `300-docs/` folder. Documented all core entities (PIR_Case, Baggage_Details, Tracing_Log) and supporting entities (User, Guest, Compensation_Case, Delivery_Record, Notification_Log, Station) with complete table definitions, relationships, cardinality, enum types, data integrity constraints, and text-based ERD diagram. Included SQL DDL statements for creating database schema.</div>
+              </td>
+            </tr>
+            <tr id="row-24" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">24</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="rename @entity-relationship-diagram.md as Technical Specification Document (LLM) v1.0[BTS].md. The Entity Relationship Diagram is just 1 part. refer to @Functional Specification Document (LLM) v1.0 [BTS].md">rename @entity-relationship-diagram.md as Technical Specification Document (LLM) v1.0[BTS].md. The Entity Relationship Diagram is just 1 part. refer to @Functional Specification Document (LLM) v1.0 [BTS].md</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Renamed file from `entity-relationship-diagram.md` to `Technical Specification Document (LLM) v1.0[BTS].md` and expanded content to be a comprehensive Technical Specification Document. Added sections beyond ERD including: System Architecture, Component Architecture, Data Flow Diagrams, API Specifications, Integration Capabilities (Navitaire, AskBo, Salesforce, BRS, Finance Oracle, Tune Protect, Google Chat), Security Considerations, Performance Optimization, Deployment Architecture, and Version History. The ERD section became Section 3 of the expanded document.</div>
+              </td>
+            </tr>
+            <tr id="row-25" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">25</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="in create PIR, there is a Search booking via PNR/Booking Reference. This feature will need to connect to Navitaire Digital API. First the will call generate token then use the token to call get booking info api. This process will call 2 endpounts. 1. curl --location 'https://dotrez-proxy.devairasia.com/t2r4y/api/auth/v1/token/user' ... and 2. curl --location 'https://dotrez-proxy.devairasia.com/t2r4y/api/nsk/v1/booking/retrieve/byRecordLocator/SR4W7T' ... update @Technical Specification Document (LLM) v1.0[BTS].md">in create PIR, there is a Search booking via PNR/Booking Reference. This feature will need to connect to Navitaire Digital API. First the will call generate token then use the token to call get booking info api. This process will call 2 endpounts. 1. curl --location 'https://dotrez-proxy.devairasia.com/t2r4y/api/auth/v1/token/user' ... and 2. curl --location 'https://dotrez-proxy.devairasia.com/t2r4y/api/nsk/v1/booking/retrieve/byRecordLocator/SR4W7T' ... update @Technical Specification Document (LLM) v1.0[BTS].md</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated Section 6.2 (Navitaire Integration) with two-step authentication flow, added new API endpoint `/api/v1/pir/search-booking` in Section 5.2.2, updated PIR Creation Flow in Section 2.4.1, and updated Navitaire Adapter description. Documented base URL, authentication endpoints, request/response formats, error handling, and token management.</div>
+              </td>
+            </tr>
+            <tr id="row-26" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">26</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="make corrections to step 1 get token. curl --location 'https://stgesb.proxy.airasia.com/int/nav/stg4y/api/auth/v1/token/user' --header 'jwt: Bearer ...' --header 'Content-Type: application/json' --data-raw '{ \"credentials\": { \"username\": \"APIOTAGOMXSND\", \"password\": \"M@145iaQudsTgSnD\", \"domain\": \"TOP\" } }'. make sure that the curl command is added in the document for later reference when web api project is created">make corrections to step 1 get token. curl --location 'https://stgesb.proxy.airasia.com/int/nav/stg4y/api/auth/v1/token/user' --header 'jwt: Bearer ...' --header 'Content-Type: application/json' --data-raw '{ \"credentials\": { \"username\": \"APIOTAGOMXSND\", \"password\": \"M@145iaQudsTgSnD\", \"domain\": \"TOP\" } }'. make sure that the curl command is added in the document for later reference when web api project is created</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated Section 6.2.3 (Base URL) to staging environment URL `https://stgesb.proxy.airasia.com/int/nav/stg4y`, added ESB JWT Bearer token requirement in `jwt` header for Step 1, updated Section 6.2.4 with correct endpoint and headers, added Section 6.2.11 (cURL Command Reference) with complete curl commands for both steps, updated security considerations and implementation notes to include ESB JWT token.</div>
+              </td>
+            </tr>
+            <tr id="row-27" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">27</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="update step 2. Retrieve Booking Information with new curl command. curl --location 'https://stgesb.proxy.airasia.com/int/nav/stg4y/api/nsk/v1/booking/retrieve/byRecordLocator/SR4W7T' --header 'Authorization: Bearer ...' --header 'Cookie: ...' --header 'jwt: Bearer ...'">update step 2. Retrieve Booking Information with new curl command. curl --location 'https://stgesb.proxy.airasia.com/int/nav/stg4y/api/nsk/v1/booking/retrieve/byRecordLocator/SR4W7T' --header 'Authorization: Bearer ...' --header 'Cookie: ...' --header 'jwt: Bearer ...'</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated Section 6.2.4 Step 2 to include `jwt` header requirement (ESB JWT token) in addition to Authorization header, updated cURL command reference in Section 6.2.11 with new token and jwt header, updated TypeScript implementation example to include jwt header in Step 2, updated integration flow diagram to show Step 2 also requires ESB JWT token, updated PIR Creation Flow to reflect both headers required.</div>
+              </td>
+            </tr>
+            <tr id="row-28" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">28</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="this is the sample response from step 2. retrieve booking information. {[Note: User provided complete JSON response - too large to include verbatim here. Response contains data object with: receivedBy, hold, breakdown (journeyTotals, journeys object, passengerTotals, addOnTotals, passengers object), queues array, history array, contacts object (P with name, emailAddress, phoneNumbers, address), orders array, addOns object, info object (status, bookedDate, createdDate, modifiedDate, etc.), payments array, comments array, recordLocator, journeys array (with designator, segments array containing fares, identifier, passengerSegment, legs array with legInfo), bookingKey, locators, currencyCode, sales, systemCode, groupName, typeOfSale, passengers object keyed by passengerKey with fees, passengerTypeCode, info, name, travelDocuments, etc.]}">this is the sample response from step 2. retrieve booking information. {[Note: User provided complete JSON response - too large to include verbatim here. Response contains data object with: receivedBy, hold, breakdown (journeyTotals, journeys object, passengerTotals, addOnTotals, passengers object), queues array, history array, contacts object (P with name, emailAddress, phoneNumbers, address), orders array, addOns object, info object (status, bookedDate, createdDate, modifiedDate, etc.), payments array, comments array, recordLocator, journeys array (with designator, segments array containing fares, identifier, passengerSegment, legs array with legInfo), bookingKey, locators, currencyCode, sales, systemCode, groupName, typeOfSale, passengers object keyed by passengerKey with fees, passengerTypeCode, info, name, travelDocuments, etc.]}</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated Section 6.2.4 Step 2 response example to show actual Navitaire API response structure with `data` wrapper, updated Section 6.2.7 (Data Mapping) to reflect actual JSON paths for flight and guest information, added Section 6.2.12 (Complete Sample Response Reference) with representative sample showing key structure, updated BTS API endpoint response example in Section 5.2.2 to show transformed Navitaire response format.</div>
+              </td>
+            </tr>
+            <tr id="row-29" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">29</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="the response is not fully captured. {[Note: User provided complete massive JSON response - too large to include verbatim here. Response includes full breakdown.passengerTotals with all charges arrays, full journeys object with complete journeyKey entries, full segments arrays with complete passengerSegment objects for all passengers (MiFDSEQ-, MSFBRFQ-, MCFBRFQ-) including all ssrs arrays, seats arrays, scores arrays, full legs arrays with complete legInfo objects, full passengers object with all fees arrays, complete contacts.P object, full payments array with complete details objects, full comments array with all entries, full queues array, and all nested structures. Response is approximately 50KB+ in size.]}">the response is not fully captured. {[Note: User provided complete massive JSON response - too large to include verbatim here. Response includes full breakdown.passengerTotals with all charges arrays, full journeys object with complete journeyKey entries, full segments arrays with complete passengerSegment objects for all passengers (MiFDSEQ-, MSFBRFQ-, MCFBRFQ-) including all ssrs arrays, seats arrays, scores arrays, full legs arrays with complete legInfo objects, full passengers object with all fees arrays, complete contacts.P object, full payments array with complete details objects, full comments array with all entries, full queues array, and all nested structures. Response is approximately 50KB+ in size.]}</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated Section 6.2.12 with more complete sample response showing actual structure including journeys, segments, passengers, contacts, breakdown, payments, comments, queues, and all nested fields. Added comprehensive notes about response structure, key fields for PIR creation, multi-flight handling, and implementation notes. Documented that complete response can be 50KB+ for complex bookings and includes extensive details for all passengers/segments/journeys.</div>
+              </td>
+            </tr>
+            <tr id="row-30" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">30</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="@03-create-tsd-logs.md does not capture all prompts and responses in sequence. make sure to capture them from this chat. make sure to follow this format. @03-logs.md">@03-create-tsd-logs.md does not capture all prompts and responses in sequence. make sure to capture them from this chat. make sure to follow this format. @03-logs.md</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Reformatted TSD session logs to match 03-logs.md format with numbered prompts and concise result summaries. Added missing initial prompts (1 and 2) about creating ERD documentation and renaming/expanding to Technical Specification Document. Ensured all prompts are captured in sequence with exact text (untruncated) and proper formatting.</div>
+              </td>
+            </tr>
+            <tr id="row-31" class="align-top" data-category="docs">
+              <td class="px-4 py-3 font-medium">31</td>
+              <td class="px-4 py-3"><span class="badge badge-docs">Docs</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="@03-create-tsd-logs.md does not capture actual prompts and responses. review this chat and update.">@03-create-tsd-logs.md does not capture actual prompts and responses. review this chat and update.</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated log file to include exact prompts (untruncated) and reformatted to match 03-logs.md style. Added missing prompts 1 and 2 about ERD creation and TSD expansion. Renumbered all subsequent prompts to maintain correct sequence.</div>
+              </td>
+            </tr>
+            <tr id="row-32" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">32</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="create a new node js + express web api in folder @200-projects/ @iteration-01/ named airasia-bts-api">create a new node js + express web api in folder @200-projects/ @iteration-01/ named airasia-bts-api</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created Node.js + Express API project with TypeScript in `airasia-bts/v1/200-projects/iteration-01/airasia-bts-api`. Set up project structure following conventions from `airasia-gom-api`, including Express server, TypeScript configuration, middleware (Helmet, CORS, Rate Limiting, Morgan), error handling, and environment configuration.</div>
+              </td>
+            </tr>
+            <tr id="row-33" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">33</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="add an initial endpoint named /HealthCheck.">add an initial endpoint named /HealthCheck.</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Added `/HealthCheck` endpoint to the API that returns health status. Updated server startup message to include the new endpoint.</div>
+              </td>
+            </tr>
+            <tr id="row-34" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">34</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="modify @airasia-bts-web/ to use middleware @airasia-bts-api/ for all transactions. create a mockup folder in @airasia-bts-api/ where all mockup data for each needed entity will be generated as json files to simulate database connectivity and functionality. the front end will require a session state and be saved in local webbrowser, this state will have a generated jwt for successful login. all calls from the front end to middleware will require to pass the jwt as part of security layer. refer to @Functional Specification Document (LLM) v1.0 [BTS].md and @Technical Specification Document (LLM) v1.0[BTS].md and fetch all information about required entities and structure.">modify @airasia-bts-web/ to use middleware @airasia-bts-api/ for all transactions. create a mockup folder in @airasia-bts-api/ where all mockup data for each needed entity will be generated as json files to simulate database connectivity and functionality. the front end will require a session state and be saved in local webbrowser, this state will have a generated jwt for successful login. all calls from the front end to middleware will require to pass the jwt as part of security layer. refer to @Functional Specification Document (LLM) v1.0 [BTS].md and @Technical Specification Document (LLM) v1.0[BTS].md and fetch all information about required entities and structure.</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created `mockup-data` folder in API with JSON files for all entities (users, stations, guests, pir-cases, baggage-details, tracing-logs, compensation-cases, delivery-records, notification-logs). Implemented JWT authentication system with login, refresh, and logout endpoints. Created `api-client.ts` in frontend for API communication. Updated frontend to use API instead of local storage: login page authenticates via API and stores JWT, cases page fetches PIRs from API, authenticated layout checks JWT, header retrieves user from JWT. All API routes protected with JWT authentication middleware.</div>
+              </td>
+            </tr>
+            <tr id="row-35" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">35</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="im getting build error.">im getting build error.</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed TypeScript build errors: removed unused `bcrypt` import, renamed unused `req` parameter to `_req` in logout function, and fixed JWT `expiresIn` type casting issues.</div>
+              </td>
+            </tr>
+            <tr id="row-36" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">36</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="im getting build error.">im getting build error.</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed frontend build error in `api-client.ts` by changing headers type from `HeadersInit` to `Record<string, string>` to allow direct property assignment for Authorization header.</div>
+              </td>
+            </tr>
+            <tr id="row-37" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">37</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="getting issue with http://localhost:3000/cases. Console TypeError">getting issue with http://localhost:3000/cases. Console TypeError</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed `TypeError: pirs.forEach is not a function` by updating `getAllPIRs` method in `api-client.ts` and `loadCases` function in cases page to correctly extract nested `data` array and `pagination` object from API response structure. Added defensive checks to ensure `pirs` is always an array.</div>
+              </td>
+            </tr>
+            <tr id="row-38" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">38</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="in Step 1: Enter PNR or Scan Barcode. this should fetch booking details via PNR/BookingID from navitaire endpoints. refer to @Technical Specification Document (LLM) v1.0[BTS].md">in Step 1: Enter PNR or Scan Barcode. this should fetch booking details via PNR/BookingID from navitaire endpoints. refer to @Technical Specification Document (LLM) v1.0[BTS].md</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Implemented Navitaire integration adapter (`navitaireAdapter.ts`) with two-step authentication (token generation + booking retrieval), token caching, and booking data transformation. Created `/api/v1/pir/search-booking` endpoint. Updated create PIR page to use `apiClient.searchBooking` with debounced search, loading states, and auto-population of flight and guest details from Navitaire response.</div>
+              </td>
+            </tr>
+            <tr id="row-39" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">39</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="getting this error.">getting this error.</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed `TypeError: Cannot read properties of undefined (reading 'substring')` in `navitaireAdapter.ts` by adding validation to check if token exists and is a string before using it, and updating token extraction logic to handle nested `data` object in Navitaire authentication response.</div>
+              </td>
+            </tr>
+            <tr id="row-40" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">40</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="implement this">implement this</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Applied suggested fixes for the TypeError: added robust token validation, safety checks for token before calling substring, and console logging to inspect authentication responses.</div>
+              </td>
+            </tr>
+            <tr id="row-41" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">41</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="test authenticate">test authenticate</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created test script `test-script/test-auth.ts` to verify Navitaire authentication and booking retrieval. Test passed successfully, confirming authentication flow and token caching work correctly.</div>
+              </td>
+            </tr>
+            <tr id="row-42" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">42</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="all test scripts should be inside/test-script folder">all test scripts should be inside/test-script folder</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Moved test script from root directory to `test-script/` folder and updated import paths to use relative paths.</div>
+              </td>
+            </tr>
+            <tr id="row-43" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">43</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="test retrieveBooking using SR4W7T for pnr">test retrieveBooking using SR4W7T for pnr</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created dedicated test script `test-script/test-retrieve-booking.ts` to test `retrieveBooking` method with PNR `SR4W7T`. Test passed successfully, confirming booking retrieval and data transformation work correctly.</div>
+              </td>
+            </tr>
+            <tr id="row-44" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">44</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="in create PIR /create-pir, when a booking was Successfully fetch, there can be two journeys from the result, the Flight number should be a dropdown. and all Flight Details and Guest Details information should be pre populated based on the Flight number selection. flight number is from  "identifier": { "opSuffix": null, "identifier": "183", "carrierCode": "D7" }, carrierCode + identifier">in create PIR /create-pir, when a booking was Successfully fetch, there can be two journeys from the result, the Flight number should be a dropdown. and all Flight Details and Guest Details information should be pre populated based on the Flight number selection. flight number is from  "identifier": { "opSuffix": null, "identifier": "183", "carrierCode": "D7" }, carrierCode + identifier</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Implemented flight number dropdown in create PIR page. When multiple flights exist, dropdown displays all flights with format `{carrierCode}{identifier}` (e.g., "D7183"). Selecting a flight auto-populates Flight Details (flight number, route, departure date/time) and Guest Details (name, email, phone, guest ID). Added read-only styling and helper text for auto-filled fields.</div>
+              </td>
+            </tr>
+            <tr id="row-45" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">45</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="update @Technical Specification Document (LLM) v1.0[BTS].md to incorporate this requirement and changes">update @Technical Specification Document (LLM) v1.0[BTS].md to incorporate this requirement and changes</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Updated TSD sections 2.4.1 (PIR Creation Flow), 5.2.2 (API Endpoint), 6.2.7 (Data Mapping), and 6.2.12 (Implementation Notes) to document flight dropdown requirement, flight number construction (`carrierCode + identifier`), multi-flight handling, and auto-population behavior. Added version 1.1 to revision history.</div>
+              </td>
+            </tr>
+            <tr id="row-46" class="align-top" data-category="api">
+              <td class="px-4 py-3 font-medium">46</td>
+              <td class="px-4 py-3"><span class="badge badge-api">API</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="capture all questions and prompts from this chat and save to 04-create-api-logs.md inside @400-logs/">capture all questions and prompts from this chat and save to 04-create-api-logs.md inside @400-logs/</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created log file documenting all prompts and responses from this session.</div>
+              </td>
+            </tr>
+            <tr id="row-47" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">47</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="create a new node js application in @iteration-01/  named airasia-bts-db. this application will help me connect to my local postregs instance. the expectation for this app is for cursor ai to have context of my local db, storage files for db scripts, and create simple npm run scripts to check db connection.  my local instance is DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=bts-poc
+DB_USER=americomarqueses
+DB_PASSWORD=">create a new node js application in @iteration-01/  named airasia-bts-db. this application will help me connect to my local postregs instance. the expectation for this app is for cursor ai to have context of my local db, storage files for db scripts, and create simple npm run scripts to check db connection.  my local instance is DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=bts-poc
+DB_USER=americomarqueses
+DB_PASSWORD=</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created Node.js + TypeScript database utility application in `airasia-bts/v1/200-projects/iteration-01/airasia-bts-db`. Set up project structure following conventions from `airasia-gom-db`, including PostgreSQL connection pool (`src/db.ts`), connection check script (`scripts/check-connection.ts`), TypeScript configuration, and organized storage folders (`db/sql/`, `db/migrations/`, `db/seeds/`). Configured with default values matching user's local PostgreSQL instance (localhost:5432, bts-poc database, americomarqueses user). Added npm scripts: `dev` (runs main entry), `build` (type check), and `check:db` (connection verification). Created README with setup instructions and .gitignore to exclude node_modules and .env files.</div>
+              </td>
+            </tr>
+            <tr id="row-48" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">48</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="create the db based on entity relationship schema and data definitions in @Technical Specification Document (LLM) v1.0[BTS].md">create the db based on entity relationship schema and data definitions in @Technical Specification Document (LLM) v1.0[BTS].md</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created complete database schema based on Technical Specification Document. Generated SQL scripts: `01-schema.sql` (all ENUM types and 9 tables: Station, User, Guest, PIR_Case, Baggage_Details, Tracing_Log, Compensation_Case, Delivery_Record, Notification_Log), `02-indexes.sql` (all performance indexes as specified in TSD Section 4.9.2), `01-stations.sql` seed file (sample AirAsia airport stations), and `00-init.sql` reference file. Created `scripts/run-sql.mjs` utility to execute SQL files with transaction support. Added npm scripts: `db:schema` (create schema), `db:indexes` (create indexes), `db:init` (schema + indexes), and `db:seed:stations` (seed stations). All tables include proper foreign keys, constraints, and follow TSD naming conventions (PascalCase with underscores). Updated README with database setup instructions.</div>
+              </td>
+            </tr>
+            <tr id="row-49" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">49</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="npm run db:seed:stations">npm run db:seed:stations</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Successfully executed stations seed script. Inserted 15 sample AirAsia airport stations into the Station table, including Malaysian airports (KUL, PEN, LGK, JHB, BKI) and international airports (SIN, BKK, DMK, CGK, DPS, MNL, DEL, BOM, SYD, MEL). All stations marked as active with contact information. Script uses ON CONFLICT DO NOTHING to allow safe re-execution.</div>
+              </td>
+            </tr>
+            <tr id="row-50" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">50</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="seed users tables with @users.json">seed users tables with @users.json</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Created users seed script (`db/seeds/02-users.sql`) based on mockup-data/users.json. Inserted 7 users into User table (2 MLO, 2 CBTO, 2 SM, 1 Finance). Excluded user 'CHA001' with 'CustomerHappiness' role as it's not a valid enum value (valid roles: MLO, CBTO, SM, Finance, Admin). Excluded Password field from seed data as passwords should be handled by authentication system. Added npm script `db:seed:users` and updated README. Successfully executed seed script - all users inserted with proper foreign key references to Station table.</div>
+              </td>
+            </tr>
+            <tr id="row-51" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">51</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="there should be a separate role table in the local db. read role definition from @Functional Specification Document (LLM) v1.0 [BTS].md">there should be a separate role table in the local db. read role definition from @Functional Specification Document (LLM) v1.0 [BTS].md</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Refactored database schema to replace user_role_enum with a separate Role table. Created Role table with columns: Role_Code (PK), Role_Name, Description, Skills, Primary_Activities, Role_Access, Is_Active, Created_At. Updated User table to use Role_Code (VARCHAR(20)) with foreign key to Role table instead of enum. Created role seed file (`db/seeds/00-roles.sql`) with 6 roles based on FSD Section 2.3: MLO, CBTO, SM, Finance, Admin, CustomerHappiness (includes all role definitions with skills, activities, and access permissions). Updated users seed to use Role_Code and included CHA001 user with CustomerHappiness role. Updated indexes to use Role_Code. Added npm scripts: `db:seed:roles` and `db:seed:all` (seeds all data). Created migration script (`03-role-table-migration.sql`) for existing databases. Updated README with role seeding instructions.</div>
+              </td>
+            </tr>
+            <tr id="row-52" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">52</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="integrate the database to @airasia-bts-api/ . all transactions should be from database and not @mockup-data.js . make sure this is implemented in all functionalities like log in, create PIR, dashboard, baggage tracing, all cases, and reports.">integrate the database to @airasia-bts-api/ . all transactions should be from database and not @mockup-data.js . make sure this is implemented in all functionalities like log in, create PIR, dashboard, baggage tracing, all cases, and reports.</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fully integrated PostgreSQL database with the API. Added `pg` dependency to package.json. Created database connection module (`src/config/database.ts`) with connection pooling. Created database models for all entities: User, Guest, PIR_Case, Baggage_Details, Tracing_Log, Compensation_Case, Delivery_Record. Updated authController to use database for login, refresh, and getCurrentUser operations. Updated pirController to use database for getAllPIRs, getPIRById, createPIR, and updatePIRStatus operations. All PIR operations now use transactions for data integrity. Removed mockup data initialization from app.ts. Updated server.ts to check database connection on startup. Updated middleware to work with Role_Code instead of Role enum. All database operations use connection pooling and proper error handling with transaction rollback. Created DATABASE_INTEGRATION.md documentation.</div>
+              </td>
+            </tr>
+            <tr id="row-53" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">53</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content collapsed" data-full="password is missing in the database. make sure password property is captured in api and front end . modify the database local table and reseed user password. refer to @users.json">password is missing in the database. make sure password property is captured in api and front end . modify the database local table and reseed user password. refer to @users.json</div>
+                <span class="expand-toggle" onclick="toggleExpand(this)">Show more</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Added Password column to User table in database schema (`01-schema.sql`). Created migration script (`04-add-password-column.sql`) to add Password column to existing databases. Updated user seed script (`02-users.sql`) to include bcrypt-hashed passwords from users.json (all users have password 'password123' hashed with bcrypt salt rounds 10). Updated User interface in `userModel.ts` to include Password field. Updated userModel queries to explicitly select Password field (excluding it from SELECT * for security). Updated authController to use bcrypt.compare() for password verification instead of demo password check. Fixed TypeScript error in database.ts (added type annotation for error parameter). Updated login page to remove "(or any 6+ characters)" note. Added npm script `db:migrate:password` to run password migration. All users now have properly hashed passwords stored in database. API server successfully starts and can authenticate users with passwords.</div>
+              </td>
+            </tr>
+            <tr id="row-54" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">54</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="im getting log in issues">im getting log in issues</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed login issue caused by PostgreSQL returning lowercase column names (`password`) while TypeScript interface expected PascalCase (`Password`). Updated `userModel.ts` to map PostgreSQL lowercase column names to TypeScript interface in both `findByUsernameOrEmail` and `findById` methods. Added explicit mapping for all User fields including Password. Login now works correctly with bcrypt password verification.</div>
+              </td>
+            </tr>
+            <tr id="row-55" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">55</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="dashboard and all cases module does not show pir cases. error shows">dashboard and all cases module does not show pir cases. error shows</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed PIR cases not showing in dashboard and all cases module. Issue was caused by two problems: (1) Frontend sending lowercase status values ("new") while database enum expects capitalized values ("New"), and (2) PostgreSQL returning lowercase column names while TypeScript interface expected PascalCase. Fixed by: (a) Updated `cases/page.tsx` to use capitalized status values ("New" instead of "new"), (b) Added status normalization in `pirModel.ts` to map lowercase status values to correct enum values, (c) Created `mapPIRRow()` function to map PostgreSQL lowercase column names to TypeScript PIRCase interface (similar to User model fix), (d) Updated all PIR model methods (`findAll`, `findById`, `create`, `updateStatus`) to use the mapping function. Dashboard and cases module should now display PIR cases correctly.</div>
+              </td>
+            </tr>
+            <tr id="row-56" class="align-top" data-category="database">
+              <td class="px-4 py-3 font-medium">56</td>
+              <td class="px-4 py-3"><span class="badge badge-database">Database</span></td>
+              <td class="px-4 py-3">
+                <div class="prompt-content" data-full="http://localhost:3000/pir-detail does not show guest details and baggage details correctly based from the database records.">http://localhost:3000/pir-detail does not show guest details and baggage details correctly based from the database records.</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="result-content">Fixed PIR detail page not showing guest and baggage details. Issue was the same PostgreSQL column name mapping problem - PostgreSQL returns lowercase column names while TypeScript interfaces expect PascalCase. Fixed by: (a) Created `mapGuestRow()` function in `guestModel.ts` to map PostgreSQL lowercase column names (guest_id, full_name, email, phone_number, etc.) to TypeScript Guest interface (Guest_ID, Full_Name, Email, Phone_Number, etc.), (b) Created `mapBaggageRow()` function in `baggageModel.ts` to map PostgreSQL lowercase column names (pir_id, tag_number, photo_path, etc.) to TypeScript BaggageDetails interface (PIR_ID, Tag_Number, Photo_Path, etc.), (c) Updated all Guest model methods (`findById`, `findByEmailOrPNR`, `create`, `update`) to use the mapping function, (d) Updated all Baggage model methods (`findByPIRId`, `create`, `update`) to use the mapping function. PIR detail page should now correctly display guest details and baggage details from the database.</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t mt-8">
+    <div class="max-w-7xl mx-auto px-4 py-6 text-xs text-gray-500 flex items-center justify-between">
+      <span>© 2025 AirAsia BTS – Prompt History</span>
+      <span>Theme: AirAsia Red • Font: Inter • Enhanced Interactive View</span>
+    </div>
+  </footer>
+
+  <script>
+    // Category filtering
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const tableRows = document.querySelectorAll('#promptsTableBody tr');
+    const searchInput = document.getElementById('searchInput');
+    const statsText = document.getElementById('statsText');
+
+    let currentCategory = 'all';
+    let currentSearch = '';
+
+    function updateStats() {
+      const visibleCount = Array.from(tableRows).filter(row => !row.classList.contains('row-hidden')).length;
+      statsText.textContent = `Showing ${visibleCount} of ${tableRows.length} prompts`;
+    }
+
+    function filterRows() {
+      tableRows.forEach(row => {
+        const category = row.getAttribute('data-category');
+        const promptText = row.querySelector('.prompt-content')?.textContent?.toLowerCase() || '';
+        const resultText = row.querySelector('.result-content')?.textContent?.toLowerCase() || '';
+        const searchMatch = !currentSearch || promptText.includes(currentSearch) || resultText.includes(currentSearch);
+        const categoryMatch = currentCategory === 'all' || category === currentCategory;
+        
+        if (searchMatch && categoryMatch) {
+          row.classList.remove('row-hidden');
+        } else {
+          row.classList.add('row-hidden');
+        }
+      });
+      updateStats();
+    }
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = btn.getAttribute('data-category');
+        filterRows();
+      });
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value.toLowerCase();
+      filterRows();
+    });
+
+    // Expand/collapse for long prompts
+    function toggleExpand(el) {
+      const promptContent = el.previousElementSibling;
+      const isCollapsed = promptContent.classList.contains('collapsed');
+      
+      if (isCollapsed) {
+        promptContent.classList.remove('collapsed');
+        let fullText = promptContent.getAttribute('data-full');
+        // Decode HTML entities
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = fullText;
+        fullText = textarea.value;
+        promptContent.textContent = fullText;
+        el.textContent = 'Show less';
+      } else {
+        const fullText = promptContent.getAttribute('data-full');
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = fullText;
+        const decodedFull = textarea.value;
+        const shortText = decodedFull.length > 100 ? decodedFull.substring(0, 100) + '...' : decodedFull;
+        promptContent.classList.add('collapsed');
+        promptContent.textContent = shortText;
+        el.textContent = 'Show more';
+      }
+    }
+
+    // Initialize collapsed prompts
+    function initializeCollapsedPrompts() {
+      document.querySelectorAll('.prompt-content.collapsed').forEach(promptContent => {
+        const fullText = promptContent.getAttribute('data-full');
+        if (fullText) {
+          // Decode HTML entities
+          const textarea = document.createElement('textarea');
+          textarea.innerHTML = fullText;
+          const decodedFull = textarea.value;
+          const shortText = decodedFull.length > 100 ? decodedFull.substring(0, 100) + '...' : decodedFull;
+          promptContent.textContent = shortText;
+        }
+      });
+    }
+
+    // Initialize stats and collapsed prompts
+    updateStats();
+    initializeCollapsedPrompts();
+  </script>
+</body>
+</html>
+
