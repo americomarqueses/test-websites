@@ -149,6 +149,48 @@
       font-size: 0.875rem;
       color: #6b7280;
     }
+    
+    /* Code blocks */
+    .code-block {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin: 1rem 0;
+    }
+    .code-block pre {
+      margin: 0;
+      padding: 0;
+      white-space: pre;
+      word-break: normal;
+      overflow-x: auto;
+    }
+    .code-block code {
+      color: #e2e8f0;
+      background: transparent;
+      padding: 0;
+      font-family: inherit;
+    }
+    .code-section {
+      margin-top: 3rem;
+    }
+    .code-section h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+    .code-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: #374151;
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -799,6 +841,34 @@ DB_PASSWORD=</div>
             </tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- Navitaire API cURL Commands Section -->
+    <section class="card p-6 code-section">
+      <h2>Navitaire API cURL Commands Reference</h2>
+      <p class="text-sm text-gray-600 mb-6">Complete cURL commands for Navitaire Digital API integration. Use these commands for testing and API implementation reference.</p>
+      
+      <h3>Step 1: Get Token</h3>
+      <div class="code-block">
+        <pre><code>curl --location 'https://stgesb.proxy.airasia.com/int/nav/stg4y/api/auth/v1/token/user' \
+--header 'jwt: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc2JNQUExMDQ3NEFrZXkiLCJhZ2VudElkIjoiTUFBMTA0NzRBIiwiZXNidXNlciI6ImVzYk1BQTEwNDc0QSJ9.N4PRfHfVxdJmqQRbv9M4dAH-ar0SuiKqGVYKEv_AnXw' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "credentials": {
+    "username": "APIOTAGOMXSND",
+    "password": "M@145iaQudsTgSnD",
+    "domain": "TOP"
+  }
+}'</code></pre>
+      </div>
+
+      <h3>Step 2: Get Booking</h3>
+      <div class="code-block">
+        <pre><code>curl --location 'https://stgesb.proxy.airasia.com/int/nav/stg4y/api/nsk/v1/booking/retrieve/byRecordLocator/SR4W7T' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMTJiOWFjZS0wNGEwLTQzMjQtYmI0My1jNGUxMTVhNzA4NjYiLCJhdXRoX3RpbWUiOiIxNzYzOTY4NTI4Iiwic2Vzc2lvbklEIjoiMCIsInRva2VuVHlwZSI6IiIsImFnZW50SUQiOiIzMDY0ODExOCIsImRvbWFpbkNvZGUiOiJUT1AiLCJhZ2VudE5hbWUiOiJBUElPVEFHT01YU05EIiwib3JnYW5pemF0aW9uQ29kZSI6IkFQSUdPTVhTTkQiLCJyb2xlQ29kZSI6IkdPTVAiLCJjaGFubmVsVHlwZSI6IkFQSSIsInN5c3RlbVR5cGUiOiJXZWJTZXJ2aWNlc0FQSSIsImNsaWVudE5hbWUiOiJXZWJTZXJ2aWNlc0FQSSIsImN1bHR1cmVDb2RlIjoiZW4tR0IiLCJjdXJyZW5jeUNvZGUiOiJNWVIiLCJsb2NhdGlvbkNvZGUiOiJBT1IiLCJwZXJzb25JRCI6IjM2NDkwNjMzIiwicGVyc29uVHlwZSI6IjIiLCJzd2l0Y2giOiIiLCJ0cmFjZUxldmVsIjoiMCIsInRyYWNlU3dpdGNoZXMiOiIwIiwiYWdlbnRRdWV1ZUNvZGUiOiIiLCJvcmdhbml6YXRpb25RdWV1ZUNvZGUiOiIiLCJleHAiOjE3NjM5Njk3Mjh9.b6dOg2dzFpIraiTcFLc3_Nl4yekHh7YUVDkkrNOpAYRmw5iP5CtngPmLDTJ4da1Qv7eZ1WEHn-2ZvTVXdSkpBf8epx9dhCwLlzgO7RrtC6S-YbqZY9AgRBhAnQHklhSy3GI88UwSgSJdtp5usrZhuGGDkBim9mXn9XP2GQ6p5vL5D-nLL9lBV1kPG4_1kuxsui63HQgN4AUkg0vHVYOxoY7jY6dptq7MMjXRscWjk84PkkM1ENUO16f6ymI28d7x52ScBCh22uCe9BmqHC4EMKfltdlF5mHY4Jr_teiIIBEwuvUbNeXa-TCVh65xPmenndMxm0tOzgpFDZuBNkcvMN17RZvpYO_LzpgZznYAmb6J_SLNiFUe8lqTBG4n9ru_5fEyF5hG7wzwtKMRr361415R-kdFt7BnM-baHF0Y3JNSDj7qb7-8vwC1KtuLNMHC_X0r81feqA6o9Ff3GUyiB_f5GC77mb1QJXUNo-rPLp2bPVSi27jLMyrcJJw1Z_lL' \
+--header 'Cookie: __cf_bm=c.ybWSr_RaB2yUPJb5_Se28JkTZuljzCQEEbGp9W.XM-1763865316-1.0.1.1-GpdoimM.WoSSdy.vYIKPFx.BwGfE4hB0MjBxkYy5ZDbiyHPaIoyMpwEQ8G58QlRFmyG9PkeXSWNKQ8sVvBJ4TcHKrtKJCE5g1JfovnYyRAg' \
+--header 'jwt: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc2JNQUExMDQ3NEFrZXkiLCJhZ2VudElkIjoiTUFBMTA0NzRBIiwiZXNidXNlciI6ImVzYk1BQTEwNDc0QSJ9.N4PRfHfVxdJmqQRbv9M4dAH-ar0SuiKqGVYKEv_AnXw'</code></pre>
       </div>
     </section>
   </main>
