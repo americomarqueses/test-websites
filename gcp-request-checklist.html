@@ -403,6 +403,84 @@
             overflow-x: auto;
         }
 
+        .preview-section {
+            margin-bottom: 32px;
+            page-break-inside: avoid;
+        }
+
+        .preview-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--fg);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .preview-task {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-left: 4px solid var(--success);
+            border-radius: 4px;
+        }
+
+        .preview-task-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: var(--fg);
+        }
+
+        .preview-task-desc {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .preview-summary {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .preview-summary h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .preview-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-summary-label {
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .preview-summary-value {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        @media print {
+            .preview-section {
+                page-break-inside: avoid;
+            }
+            .preview-task {
+                page-break-inside: avoid;
+            }
+        }
+
         .modal-footer {
             padding: 20px;
             border-top: 1px solid var(--border);
@@ -685,7 +763,7 @@
 
         <div class="checklist-section" data-phase="phase1">
             <div class="section-title">
-                Phase 1: Project Creation
+                1: Project Creation
                 <label class="select-all-container">
                     <input type="checkbox" class="select-all-checkbox" data-phase="phase1">
                     <span>Select All</span>
@@ -725,48 +803,9 @@
 
         <div class="checklist-section" data-phase="phase2">
             <div class="section-title">
-                Phase 2: Enable APIs (All Environments)
+                2: Service Accounts
                 <label class="select-all-container">
                     <input type="checkbox" class="select-all-checkbox" data-phase="phase2">
-                    <span>Select All</span>
-                </label>
-            </div>
-            <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">Run for DEV, STG, and PRD projects.
-            </div>
-
-            <label class="task-item">
-                <input type="checkbox" class="task-checkbox"
-                    data-cli="gcloud services enable run.googleapis.com --project=airasia-[name]-dev && gcloud services enable run.googleapis.com --project=airasia-[name]-stg && gcloud services enable run.googleapis.com --project=airasia-[name]-prd">
-                <div class="task-content">
-                    <div class="task-title">Enable Cloud Run Admin API</div>
-                    <div class="task-desc"><code>gcloud services enable run.googleapis.com</code></div>
-                </div>
-            </label>
-
-            <label class="task-item">
-                <input type="checkbox" class="task-checkbox"
-                    data-cli="gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-dev && gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-stg && gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-prd">
-                <div class="task-content">
-                    <div class="task-title">Enable Artifact Registry API</div>
-                    <div class="task-desc"><code>gcloud services enable artifactregistry.googleapis.com</code></div>
-                </div>
-            </label>
-
-            <label class="task-item">
-                <input type="checkbox" class="task-checkbox"
-                    data-cli="gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-dev && gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-stg && gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-prd">
-                <div class="task-content">
-                    <div class="task-title">Enable Cloud Build API</div>
-                    <div class="task-desc"><code>gcloud services enable cloudbuild.googleapis.com</code></div>
-                </div>
-            </label>
-        </div>
-
-        <div class="checklist-section" data-phase="phase3">
-            <div class="section-title">
-                Phase 3: Service Accounts
-                <label class="select-all-container">
-                    <input type="checkbox" class="select-all-checkbox" data-phase="phase3">
                     <span>Select All</span>
                 </label>
             </div>
@@ -802,9 +841,66 @@
             </label>
         </div>
 
+        <div class="checklist-section" data-phase="phase3">
+            <div class="section-title">
+                3: Enable APIs (All Environments)
+                <label class="select-all-container">
+                    <input type="checkbox" class="select-all-checkbox" data-phase="phase3">
+                    <span>Select All</span>
+                </label>
+            </div>
+            <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">Run for DEV, STG, and PRD projects.
+            </div>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud services enable run.googleapis.com --project=airasia-[name]-dev && gcloud services enable run.googleapis.com --project=airasia-[name]-stg && gcloud services enable run.googleapis.com --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Enable Cloud Run Admin API</div>
+                    <div class="task-desc"><code>gcloud services enable run.googleapis.com</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-dev && gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-stg && gcloud services enable artifactregistry.googleapis.com --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Enable Artifact Registry API</div>
+                    <div class="task-desc"><code>gcloud services enable artifactregistry.googleapis.com</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-dev && gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-stg && gcloud services enable cloudbuild.googleapis.com --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Enable Cloud Build API</div>
+                    <div class="task-desc"><code>gcloud services enable cloudbuild.googleapis.com</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud services enable cloudkms.googleapis.com --project=airasia-[name]-dev && gcloud services enable cloudkms.googleapis.com --project=airasia-[name]-stg && gcloud services enable cloudkms.googleapis.com --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Enable Cloud Key Management Service (KMS) API</div>
+                    <div class="task-desc"><code>gcloud services enable cloudkms.googleapis.com</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="gcloud services enable cloudresourcemanager.googleapis.com --project=airasia-[name]-dev && gcloud services enable cloudresourcemanager.googleapis.com --project=airasia-[name]-stg && gcloud services enable cloudresourcemanager.googleapis.com --project=airasia-[name]-prd">
+                <div class="task-content">
+                    <div class="task-title">Enable Cloud Resource Manager API</div>
+                    <div class="task-desc"><code>gcloud services enable cloudresourcemanager.googleapis.com</code></div>
+                </div>
+            </label>
+        </div>
+
         <div class="checklist-section" data-phase="phase4">
             <div class="section-title">
-                Phase 4: <span class="dynamic-project-base">[name]</span> IAM Roles
+                4: <span class="dynamic-project-base">[name]</span> IAM Roles
                 <label class="select-all-container">
                     <input type="checkbox" class="select-all-checkbox" data-phase="phase4">
                     <span>Select All</span>
@@ -896,6 +992,15 @@
 
             <label class="task-item">
                 <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyEncrypterDecrypter' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyEncrypterDecrypter' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyEncrypterDecrypter'">
+                <div class="task-content">
+                    <div class="task-title">Cloud KMS CryptoKey Encrypter/Decrypter</div>
+                    <div class="task-desc">Role: <code>roles/cloudkms.cryptoKeyEncrypterDecrypter</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
                     data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/run.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/run.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/run.admin'">
                 <div class="task-content">
                     <div class="task-title">Cloud Run Admin</div>
@@ -968,6 +1073,24 @@
 
             <label class="task-item">
                 <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/compute.networkAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/compute.networkAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/compute.networkAdmin'">
+                <div class="task-content">
+                    <div class="task-title">VPC Network Admin</div>
+                    <div class="task-desc">Role: <code>roles/compute.networkAdmin</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
+                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/compute.loadBalancerAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/compute.loadBalancerAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/compute.loadBalancerAdmin'">
+                <div class="task-content">
+                    <div class="task-title">Load Balancer Admin</div>
+                    <div class="task-desc">Role: <code>roles/compute.loadBalancerAdmin</code></div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" 
                     data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:sa-dev@airasia-[name]-dev.iam.gserviceaccount.com' --role='roles/storage.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:sa-stg@airasia-[name]-stg.iam.gserviceaccount.com' --role='roles/storage.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:sa-prd@airasia-[name]-prd.iam.gserviceaccount.com' --role='roles/storage.admin'">
                 <div class="task-content">
                     <div class="task-title">Storage Admin</div>
@@ -978,42 +1101,80 @@
 
         <div class="checklist-section" data-phase="phase5">
             <div class="section-title">
-                Phase 5: Compute Engine Default Service Account Roles
+                5: VPC Selection
                 <label class="select-all-container">
                     <input type="checkbox" class="select-all-checkbox" data-phase="phase5">
                     <span>Select All</span>
                 </label>
             </div>
             <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">
-                Assign these roles to the Compute Engine default service account for each environment.<br>
-                Format: <code>{PROJECT_NUMBER}-compute@developer.gserviceaccount.com</code><br>
-                <em>Note: Replace [PROJECT_NUMBER_DEV], [PROJECT_NUMBER_STG], [PROJECT_NUMBER_PRD] with actual project numbers.</em>
+                Indicate which environments require a dedicated VPC configuration.
             </div>
 
             <label class="task-item">
-                <input type="checkbox" class="task-checkbox" 
-                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:[PROJECT_NUMBER_DEV]-compute@developer.gserviceaccount.com' --role='roles/storage.objectAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:[PROJECT_NUMBER_STG]-compute@developer.gserviceaccount.com' --role='roles/storage.objectAdmin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:[PROJECT_NUMBER_PRD]-compute@developer.gserviceaccount.com' --role='roles/storage.objectAdmin'">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="# VPC selection for DEV environment">
                 <div class="task-content">
-                    <div class="task-title">Storage Object Admin</div>
-                    <div class="task-desc">Role: <code>roles/storage.objectAdmin</code></div>
+                    <div class="task-title">DEV VPC Required</div>
+                    <div class="task-desc">Mark if a dedicated VPC should be provisioned for the DEV environment.</div>
                 </div>
             </label>
 
             <label class="task-item">
-                <input type="checkbox" class="task-checkbox" 
-                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:[PROJECT_NUMBER_DEV]-compute@developer.gserviceaccount.com' --role='roles/cloudbuild.builds.builder' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:[PROJECT_NUMBER_STG]-compute@developer.gserviceaccount.com' --role='roles/cloudbuild.builds.builder' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:[PROJECT_NUMBER_PRD]-compute@developer.gserviceaccount.com' --role='roles/cloudbuild.builds.builder'">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="# VPC selection for STG environment">
                 <div class="task-content">
-                    <div class="task-title">Cloud Build Builds Builder</div>
-                    <div class="task-desc">Role: <code>roles/cloudbuild.builds.builder</code></div>
+                    <div class="task-title">STG VPC Required</div>
+                    <div class="task-desc">Mark if a dedicated VPC should be provisioned for the STG environment.</div>
                 </div>
             </label>
 
             <label class="task-item">
-                <input type="checkbox" class="task-checkbox" 
-                    data-cli="gcloud projects add-iam-policy-binding airasia-[name]-dev --member='serviceAccount:[PROJECT_NUMBER_DEV]-compute@developer.gserviceaccount.com' --role='roles/run.admin' && gcloud projects add-iam-policy-binding airasia-[name]-stg --member='serviceAccount:[PROJECT_NUMBER_STG]-compute@developer.gserviceaccount.com' --role='roles/run.admin' && gcloud projects add-iam-policy-binding airasia-[name]-prd --member='serviceAccount:[PROJECT_NUMBER_PRD]-compute@developer.gserviceaccount.com' --role='roles/run.admin'">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="# VPC selection for PRD environment">
                 <div class="task-content">
-                    <div class="task-title">Cloud Run Admin (Compute Engine SA)</div>
-                    <div class="task-desc">Role: <code>roles/run.admin</code></div>
+                    <div class="task-title">PRD VPC Required</div>
+                    <div class="task-desc">Mark if a dedicated VPC should be provisioned for the PRD environment.</div>
+                </div>
+            </label>
+        </div>
+
+        <div class="checklist-section" data-phase="phase6">
+            <div class="section-title">
+                6: Load Balancer Selection
+                <label class="select-all-container">
+                    <input type="checkbox" class="select-all-checkbox" data-phase="phase6">
+                    <span>Select All</span>
+                </label>
+            </div>
+            <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">
+                Indicate which environments require HTTP(S) or internal load balancers.
+            </div>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="# Load balancer selection for DEV environment">
+                <div class="task-content">
+                    <div class="task-title">DEV Load Balancer Required</div>
+                    <div class="task-desc">Mark if a load balancer should be provisioned for the DEV environment.</div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="# Load balancer selection for STG environment">
+                <div class="task-content">
+                    <div class="task-title">STG Load Balancer Required</div>
+                    <div class="task-desc">Mark if a load balancer should be provisioned for the STG environment.</div>
+                </div>
+            </label>
+
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox"
+                    data-cli="# Load balancer selection for PRD environment">
+                <div class="task-content">
+                    <div class="task-title">PRD Load Balancer Required</div>
+                    <div class="task-desc">Mark if a load balancer should be provisioned for the PRD environment.</div>
                 </div>
             </label>
         </div>
@@ -1052,15 +1213,20 @@
 
             <div class="section-divider">
                 <div style="font-size: 15px; font-weight: 600; margin-bottom: 16px; color: var(--fg);">
-                    📄 Export Checklist
+                    👁️ Preview & Export
                 </div>
+                <button class="btn btn-primary" onclick="showPreview()" 
+                    style="width: 100%; padding: 16px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+                    <span style="font-size: 20px;">👁️</span>
+                    Preview Selected Tasks
+                </button>
                 <button class="btn btn-secondary" onclick="generatePDF()" 
                     style="width: 100%; padding: 16px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span style="font-size: 20px;">📥</span>
                     Generate PDF Report
                 </button>
                 <div style="font-size:13px; color:var(--muted); margin-top:12px; text-align: center;">
-                    Export your checklist with all selections as a PDF document
+                    Preview all selected tasks or export your checklist as a PDF document
                 </div>
             </div>
         </div>
@@ -1080,6 +1246,24 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="copyCLI()">Copy to Clipboard</button>
                 <button class="btn btn-primary" onclick="closeModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal" style="max-width: 1000px;">
+            <div class="modal-header">
+                <div class="modal-title">Preview: Selected Tasks</div>
+                <button class="modal-close" onclick="closePreviewModal()">×</button>
+            </div>
+            <div class="modal-body" id="previewContent" style="padding: 20px;">
+                <!-- Preview content will be generated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="exportToGoogleSheets()">📊 Export to Google Sheets</button>
+                <button class="btn btn-secondary" onclick="printPreview()">🖨️ Print</button>
+                <button class="btn btn-primary" onclick="closePreviewModal()">Done</button>
             </div>
         </div>
     </div>
@@ -1180,6 +1364,600 @@
             });
         }
 
+        function showPreview() {
+            const baseName = document.getElementById('projectName').value.trim() || '[Project Name]';
+            const previewContent = document.getElementById('previewContent');
+            const selectedTasks = [];
+            const tasksByEnv = {
+                dev: {},
+                stg: {},
+                prd: {}
+            };
+            const envLabels = {
+                dev: 'Development (DEV)',
+                stg: 'Staging (STG)',
+                prd: 'Production (PRD)'
+            };
+            const envColors = {
+                dev: '#0ea5e9',
+                stg: '#f59e0b',
+                prd: '#e30000'
+            };
+
+            // First, determine which environments are actually selected by the user
+            // Check Phase 1 (Project Creation) to see which environments are selected
+            const selectedEnvironments = new Set();
+            const phase1Section = document.querySelector('.checklist-section[data-phase="phase1"]');
+            if (phase1Section) {
+                phase1Section.querySelectorAll('.task-checkbox:checked').forEach(cb => {
+                    const taskTitle = cb.closest('.task-item').querySelector('.task-title').textContent.trim().toLowerCase();
+                    if (taskTitle.includes('development') || taskTitle.includes('dev')) {
+                        selectedEnvironments.add('dev');
+                    }
+                    if (taskTitle.includes('staging') || taskTitle.includes('stg')) {
+                        selectedEnvironments.add('stg');
+                    }
+                    if (taskTitle.includes('production') || taskTitle.includes('prd')) {
+                        selectedEnvironments.add('prd');
+                    }
+                });
+            }
+
+            // If no Phase 1 tasks selected, check other phases for environment-specific tasks
+            if (selectedEnvironments.size === 0) {
+                document.querySelectorAll('.task-checkbox:checked').forEach(cb => {
+                    const cliCommand = cb.dataset.cli || '';
+                    const taskTitle = cb.closest('.task-item').querySelector('.task-title').textContent.trim().toLowerCase();
+                    
+                    if (cliCommand.includes('--project=airasia-[name]-dev') || cliCommand.match(/airasia-\[name\]-dev/) || taskTitle.includes('dev')) {
+                        selectedEnvironments.add('dev');
+                    }
+                    if (cliCommand.includes('--project=airasia-[name]-stg') || cliCommand.match(/airasia-\[name\]-stg/) || taskTitle.includes('stg')) {
+                        selectedEnvironments.add('stg');
+                    }
+                    if (cliCommand.includes('--project=airasia-[name]-prd') || cliCommand.match(/airasia-\[name\]-prd/) || taskTitle.includes('prd')) {
+                        selectedEnvironments.add('prd');
+                    }
+                });
+            }
+
+            // Collect all selected tasks organized by environment and phase
+            // Only process tasks for selected environments
+            document.querySelectorAll('.checklist-section').forEach(section => {
+                const phaseTitle = section.querySelector('.section-title').textContent.trim().replace(/\s*Select All\s*$/, '').trim();
+                const phaseNum = section.dataset.phase;
+
+                section.querySelectorAll('.task-checkbox:checked').forEach(cb => {
+                    const taskItem = cb.closest('.task-item');
+                    const taskTitle = taskItem.querySelector('.task-title').textContent.trim();
+                    const taskDesc = taskItem.querySelector('.task-desc').textContent.trim();
+                    const cliCommand = cb.dataset.cli || '';
+
+                    // For Phase 2, 3, 4, 5 - extract environment-specific information
+                    const appliesToEnvs = [];
+                    const envSpecificCommands = {};
+
+                    // Check if command has multiple environments (chained with &&)
+                    if (cliCommand.includes('&&')) {
+                        // Split by && and extract environment-specific commands
+                        const commands = cliCommand.split('&&').map(c => c.trim());
+                        
+                        commands.forEach(cmd => {
+                            // Check for environment in project flag
+                            if (cmd.includes('--project=airasia-[name]-dev') || cmd.match(/airasia-\[name\]-dev/)) {
+                                if (!appliesToEnvs.includes('dev') && selectedEnvironments.has('dev')) {
+                                    appliesToEnvs.push('dev');
+                                }
+                                envSpecificCommands['dev'] = cmd;
+                            }
+                            if (cmd.includes('--project=airasia-[name]-stg') || cmd.match(/airasia-\[name\]-stg/)) {
+                                if (!appliesToEnvs.includes('stg') && selectedEnvironments.has('stg')) {
+                                    appliesToEnvs.push('stg');
+                                }
+                                envSpecificCommands['stg'] = cmd;
+                            }
+                            if (cmd.includes('--project=airasia-[name]-prd') || cmd.match(/airasia-\[name\]-prd/)) {
+                                if (!appliesToEnvs.includes('prd') && selectedEnvironments.has('prd')) {
+                                    appliesToEnvs.push('prd');
+                                }
+                                envSpecificCommands['prd'] = cmd;
+                            }
+                        });
+                    } else {
+                        // Single command - check which environment it applies to
+                        if ((cliCommand.includes('--project=airasia-[name]-dev') || cliCommand.match(/airasia-\[name\]-dev/)) && selectedEnvironments.has('dev')) {
+                            appliesToEnvs.push('dev');
+                            envSpecificCommands['dev'] = cliCommand;
+                        }
+                        if ((cliCommand.includes('--project=airasia-[name]-stg') || cliCommand.match(/airasia-\[name\]-stg/)) && selectedEnvironments.has('stg')) {
+                            appliesToEnvs.push('stg');
+                            envSpecificCommands['stg'] = cliCommand;
+                        }
+                        if ((cliCommand.includes('--project=airasia-[name]-prd') || cliCommand.match(/airasia-\[name\]-prd/)) && selectedEnvironments.has('prd')) {
+                            appliesToEnvs.push('prd');
+                            envSpecificCommands['prd'] = cliCommand;
+                        }
+                    }
+
+                    // If no environment detected from CLI, check task title/desc
+                    if (appliesToEnvs.length === 0) {
+                        const titleLower = taskTitle.toLowerCase();
+                        const descLower = taskDesc.toLowerCase();
+                        if ((titleLower.includes('dev') || descLower.includes('dev')) && selectedEnvironments.has('dev')) {
+                            appliesToEnvs.push('dev');
+                        }
+                        if ((titleLower.includes('stg') || descLower.includes('stg')) && selectedEnvironments.has('stg')) {
+                            appliesToEnvs.push('stg');
+                        }
+                        if ((titleLower.includes('prd') || descLower.includes('prd')) && selectedEnvironments.has('prd')) {
+                            appliesToEnvs.push('prd');
+                        }
+                    }
+
+                    // For Phase 2, 3, 4 - ensure tasks are environment-specific
+                    // If still no environment detected and it's Phase 2-4, don't add (shouldn't happen)
+                    if (appliesToEnvs.length === 0 && ['phase2', 'phase3', 'phase4'].includes(phaseNum)) {
+                        // Skip tasks without environment for these phases
+                        return;
+                    }
+
+                    // Add task to each applicable environment with environment-specific command if available
+                    appliesToEnvs.forEach(env => {
+                        if (!tasksByEnv[env][phaseTitle]) {
+                            tasksByEnv[env][phaseTitle] = [];
+                        }
+                        
+                        // Use environment-specific command in description if available
+                        let finalDesc = taskDesc;
+                        let finalTitle = taskTitle;
+                        
+                        // Replace [name] placeholder with actual project name
+                        finalDesc = finalDesc.replace(/\[name\]/g, baseName);
+                        
+                        // For Phase 1 project creation tasks, add full project name to title
+                        if (phaseNum === 'phase1' && (taskTitle.includes('Development Project') || taskTitle.includes('Staging Project') || taskTitle.includes('Production Project'))) {
+                            const projectName = `airasia-${baseName}-${env}`;
+                            finalTitle = `${taskTitle} (${projectName})`;
+                        }
+                        
+                        if (envSpecificCommands[env]) {
+                            // Extract just the command part (remove project flag for cleaner display)
+                            let envCmd = envSpecificCommands[env].replace(/\[name\]/g, baseName);
+                            envCmd = envCmd.replace(/--project=airasia-\[name\]-\w+/g, `--project=airasia-${baseName}-${env}`);
+                            // Try to extract the main command (before --project)
+                            const mainCmd = envCmd.split('--project')[0].trim();
+                            if (mainCmd) {
+                                finalDesc = `<code>${mainCmd}</code>`;
+                            } else {
+                                // If no main command found, use the full command with [name] replaced
+                                finalDesc = `<code>${envCmd}</code>`;
+                            }
+                        }
+                        
+                        tasksByEnv[env][phaseTitle].push({ 
+                            title: finalTitle, 
+                            desc: finalDesc,
+                            env: env
+                        });
+                        selectedTasks.push({ 
+                            env: env, 
+                            phase: phaseTitle, 
+                            title: finalTitle, 
+                            desc: finalDesc 
+                        });
+                    });
+                });
+            });
+
+            // Generate preview HTML
+            let html = `
+                <div class="preview-summary">
+                    <h3>📋 Summary</h3>
+                    <div class="preview-summary-item">
+                        <span class="preview-summary-label">Project Name:</span>
+                        <span class="preview-summary-value">${baseName}</span>
+                    </div>
+                    <div class="preview-summary-item">
+                        <span class="preview-summary-label">Total Selected Tasks:</span>
+                        <span class="preview-summary-value">${selectedTasks.length}</span>
+                    </div>
+                    <div class="preview-summary-item">
+                        <span class="preview-summary-label">Total Available Tasks:</span>
+                        <span class="preview-summary-value">${document.querySelectorAll('.task-checkbox').length}</span>
+                    </div>
+                    <div class="preview-summary-item">
+                        <span class="preview-summary-label">Generated:</span>
+                        <span class="preview-summary-value">${new Date().toLocaleString()}</span>
+                    </div>
+                </div>
+            `;
+
+            // Add tasks by environment
+            ['dev', 'stg', 'prd'].forEach(env => {
+                const envTasks = tasksByEnv[env];
+                const hasTasks = Object.keys(envTasks).length > 0;
+
+                if (hasTasks) {
+                    html += `<div class="preview-section" style="border-left: 4px solid ${envColors[env]}; padding-left: 16px; margin-left: 0;">
+                        <div class="preview-section-title" style="color: ${envColors[env]}; border-bottom-color: ${envColors[env]};">
+                            🏷️ ${envLabels[env]}
+                        </div>`;
+
+                    // Add tasks by phase within this environment (sorted by phase order)
+                    const phaseOrder = ['1: Project Creation', '2: Service Accounts', '3: Enable APIs (All Environments)', '4:', '5: VPC Selection', '6: Load Balancer Selection'];
+                    const sortedPhases = Object.keys(envTasks).sort((a, b) => {
+                        const aIndex = phaseOrder.findIndex(p => a.startsWith(p.split(':')[0]));
+                        const bIndex = phaseOrder.findIndex(p => b.startsWith(p.split(':')[0]));
+                        return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+                    });
+                    
+                    sortedPhases.forEach(phaseTitle => {
+                        html += `<div style="margin-bottom: 20px;">
+                            <div style="font-weight: 600; font-size: 14px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                ${phaseTitle}
+                            </div>`;
+
+                        envTasks[phaseTitle].forEach(task => {
+                            html += `
+                                <div class="preview-task">
+                                    <div class="preview-task-title">✅ ${task.title}</div>
+                                    <div class="preview-task-desc">${task.desc}</div>
+                                </div>
+                            `;
+                        });
+
+                        html += `</div>`;
+                    });
+
+                    html += `</div>`;
+                }
+            });
+
+            if (selectedTasks.length === 0) {
+                html = `
+                    <div style="text-align: center; padding: 40px; color: var(--muted);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">No tasks selected</div>
+                        <div>Please select tasks from the checklist above to preview them here.</div>
+                    </div>
+                `;
+            }
+
+            previewContent.innerHTML = html;
+            document.getElementById('previewModal').classList.add('open');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.remove('open');
+        }
+
+        function printPreview() {
+            const previewContent = document.getElementById('previewContent').innerHTML;
+            const baseName = document.getElementById('projectName').value.trim() || '[Project Name]';
+            const printWindow = window.open('', '_blank');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>GCP Provisioning Checklist - ${baseName}</title>
+                    <style>
+                        body {
+                            font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                            padding: 40px;
+                            color: #151515;
+                            line-height: 1.6;
+                        }
+                        .preview-summary {
+                            background: #f8f9fa;
+                            border: 2px solid #eaecef;
+                            border-radius: 8px;
+                            padding: 20px;
+                            margin-bottom: 24px;
+                        }
+                        .preview-summary h3 {
+                            margin: 0 0 12px 0;
+                            font-size: 16px;
+                            font-weight: 700;
+                        }
+                        .preview-summary-item {
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 8px 0;
+                            border-bottom: 1px solid #eaecef;
+                        }
+                        .preview-summary-item:last-child {
+                            border-bottom: none;
+                        }
+                        .preview-summary-label {
+                            font-weight: 600;
+                            color: #60646c;
+                        }
+                        .preview-summary-value {
+                            font-weight: 700;
+                            color: #e30000;
+                        }
+                        .preview-section {
+                            margin-bottom: 32px;
+                            page-break-inside: avoid;
+                        }
+                        .preview-section {
+                            border-left: 4px solid #e30000;
+                            padding-left: 16px;
+                            margin-left: 0;
+                        }
+                        .preview-section-title {
+                            font-size: 18px;
+                            font-weight: 700;
+                            margin-bottom: 16px;
+                            padding-bottom: 8px;
+                            border-bottom: 2px solid #e30000;
+                        }
+                        .preview-section[style*="0ea5e9"] .preview-section-title {
+                            border-bottom-color: #0ea5e9;
+                        }
+                        .preview-section[style*="f59e0b"] .preview-section-title {
+                            border-bottom-color: #f59e0b;
+                        }
+                        .preview-section[style*="e30000"] .preview-section-title {
+                            border-bottom-color: #e30000;
+                        }
+                        .preview-task {
+                            padding: 12px 16px;
+                            margin-bottom: 8px;
+                            background: #f8f9fa;
+                            border-left: 4px solid #10b981;
+                            border-radius: 4px;
+                            page-break-inside: avoid;
+                        }
+                        .preview-task-title {
+                            font-weight: 600;
+                            font-size: 15px;
+                            margin-bottom: 4px;
+                        }
+                        .preview-task-desc {
+                            font-size: 13px;
+                            color: #60646c;
+                        }
+                        @media print {
+                            .preview-section {
+                                page-break-inside: avoid;
+                            }
+                            .preview-task {
+                                page-break-inside: avoid;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1 style="margin-top: 0;">GCP Provisioning Checklist</h1>
+                    <div style="margin-bottom: 20px; color: #60646c;">
+                        Project: <strong>${baseName}</strong> | Generated: ${new Date().toLocaleString()}
+                    </div>
+                    ${previewContent}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            setTimeout(() => {
+                printWindow.print();
+            }, 250);
+        }
+
+        function exportToGoogleSheets() {
+            const baseName = document.getElementById('projectName').value.trim() || '[Project Name]';
+            const selectedTasks = [];
+            const envLabels = {
+                dev: 'Development (DEV)',
+                stg: 'Staging (STG)',
+                prd: 'Production (PRD)'
+            };
+
+            // First, determine which environments are actually selected by the user
+            // Check Phase 1 (Project Creation) to see which environments are selected
+            const selectedEnvironments = new Set();
+            const phase1Section = document.querySelector('.checklist-section[data-phase="phase1"]');
+            if (phase1Section) {
+                phase1Section.querySelectorAll('.task-checkbox:checked').forEach(cb => {
+                    const taskTitle = cb.closest('.task-item').querySelector('.task-title').textContent.trim().toLowerCase();
+                    if (taskTitle.includes('development') || taskTitle.includes('dev')) {
+                        selectedEnvironments.add('dev');
+                    }
+                    if (taskTitle.includes('staging') || taskTitle.includes('stg')) {
+                        selectedEnvironments.add('stg');
+                    }
+                    if (taskTitle.includes('production') || taskTitle.includes('prd')) {
+                        selectedEnvironments.add('prd');
+                    }
+                });
+            }
+
+            // If no Phase 1 tasks selected, check other phases for environment-specific tasks
+            if (selectedEnvironments.size === 0) {
+                document.querySelectorAll('.task-checkbox:checked').forEach(cb => {
+                    const cliCommand = cb.dataset.cli || '';
+                    const taskTitle = cb.closest('.task-item').querySelector('.task-title').textContent.trim().toLowerCase();
+                    
+                    if (cliCommand.includes('--project=airasia-[name]-dev') || cliCommand.match(/airasia-\[name\]-dev/) || taskTitle.includes('dev')) {
+                        selectedEnvironments.add('dev');
+                    }
+                    if (cliCommand.includes('--project=airasia-[name]-stg') || cliCommand.match(/airasia-\[name\]-stg/) || taskTitle.includes('stg')) {
+                        selectedEnvironments.add('stg');
+                    }
+                    if (cliCommand.includes('--project=airasia-[name]-prd') || cliCommand.match(/airasia-\[name\]-prd/) || taskTitle.includes('prd')) {
+                        selectedEnvironments.add('prd');
+                    }
+                });
+            }
+
+            // Collect all selected tasks with environment information
+            // Only process tasks for selected environments
+            document.querySelectorAll('.checklist-section').forEach(section => {
+                const phaseTitle = section.querySelector('.section-title').textContent.trim().replace(/\s*Select All\s*$/, '').trim();
+                const phaseNum = section.dataset.phase;
+                
+                section.querySelectorAll('.task-checkbox:checked').forEach(cb => {
+                    const taskItem = cb.closest('.task-item');
+                    const taskTitle = taskItem.querySelector('.task-title').textContent.trim();
+                    const taskDesc = taskItem.querySelector('.task-desc').textContent.trim();
+                    const cliCommand = cb.dataset.cli || '';
+
+                    // Determine which environments this task applies to
+                    const appliesToEnvs = [];
+                    const envSpecificCommands = {};
+
+                    // Check if command has multiple environments (chained with &&)
+                    if (cliCommand.includes('&&')) {
+                        // Split by && and extract environment-specific commands
+                        const commands = cliCommand.split('&&').map(c => c.trim());
+                        
+                        commands.forEach(cmd => {
+                            // Check for environment in project flag
+                            if (cmd.includes('--project=airasia-[name]-dev') || cmd.match(/airasia-\[name\]-dev/)) {
+                                if (!appliesToEnvs.includes('dev') && selectedEnvironments.has('dev')) {
+                                    appliesToEnvs.push('dev');
+                                }
+                                envSpecificCommands['dev'] = cmd;
+                            }
+                            if (cmd.includes('--project=airasia-[name]-stg') || cmd.match(/airasia-\[name\]-stg/)) {
+                                if (!appliesToEnvs.includes('stg') && selectedEnvironments.has('stg')) {
+                                    appliesToEnvs.push('stg');
+                                }
+                                envSpecificCommands['stg'] = cmd;
+                            }
+                            if (cmd.includes('--project=airasia-[name]-prd') || cmd.match(/airasia-\[name\]-prd/)) {
+                                if (!appliesToEnvs.includes('prd') && selectedEnvironments.has('prd')) {
+                                    appliesToEnvs.push('prd');
+                                }
+                                envSpecificCommands['prd'] = cmd;
+                            }
+                        });
+                    } else {
+                        // Single command - check which environment it applies to
+                        if ((cliCommand.includes('--project=airasia-[name]-dev') || cliCommand.match(/airasia-\[name\]-dev/)) && selectedEnvironments.has('dev')) {
+                            appliesToEnvs.push('dev');
+                            envSpecificCommands['dev'] = cliCommand;
+                        }
+                        if ((cliCommand.includes('--project=airasia-[name]-stg') || cliCommand.match(/airasia-\[name\]-stg/)) && selectedEnvironments.has('stg')) {
+                            appliesToEnvs.push('stg');
+                            envSpecificCommands['stg'] = cliCommand;
+                        }
+                        if ((cliCommand.includes('--project=airasia-[name]-prd') || cliCommand.match(/airasia-\[name\]-prd/)) && selectedEnvironments.has('prd')) {
+                            appliesToEnvs.push('prd');
+                            envSpecificCommands['prd'] = cliCommand;
+                        }
+                    }
+
+                    // If no environment detected, check task title/desc
+                    if (appliesToEnvs.length === 0) {
+                        const titleLower = taskTitle.toLowerCase();
+                        const descLower = taskDesc.toLowerCase();
+                        if ((titleLower.includes('dev') || descLower.includes('dev')) && selectedEnvironments.has('dev')) appliesToEnvs.push('dev');
+                        if ((titleLower.includes('stg') || descLower.includes('stg')) && selectedEnvironments.has('stg')) appliesToEnvs.push('stg');
+                        if ((titleLower.includes('prd') || descLower.includes('prd')) && selectedEnvironments.has('prd')) appliesToEnvs.push('prd');
+                    }
+
+                    // For Phase 2, 3, 4 - ensure tasks are environment-specific
+                    // If still no environment detected and it's Phase 2-4, don't add (shouldn't happen)
+                    if (appliesToEnvs.length === 0 && ['phase2', 'phase3', 'phase4'].includes(phaseNum)) {
+                        // Skip tasks without environment for these phases
+                        return;
+                    }
+
+                    // Add task for each applicable environment
+                    appliesToEnvs.forEach(env => {
+                        // Use environment-specific command in description if available
+                        let finalDesc = taskDesc;
+                        let finalTitle = taskTitle;
+                        
+                        // Replace [name] placeholder with actual project name
+                        finalDesc = finalDesc.replace(/\[name\]/g, baseName);
+                        
+                        // For Phase 1 project creation tasks, add full project name to title
+                        if (phaseNum === 'phase1' && (taskTitle.includes('Development Project') || taskTitle.includes('Staging Project') || taskTitle.includes('Production Project'))) {
+                            const projectName = `airasia-${baseName}-${env}`;
+                            finalTitle = `${taskTitle} (${projectName})`;
+                        }
+                        
+                        if (envSpecificCommands[env]) {
+                            // Extract just the command part (remove project flag for cleaner display)
+                            let envCmd = envSpecificCommands[env].replace(/\[name\]/g, baseName);
+                            envCmd = envCmd.replace(/--project=airasia-\[name\]-\w+/g, `--project=airasia-${baseName}-${env}`);
+                            // Try to extract the main command (before --project)
+                            const mainCmd = envCmd.split('--project')[0].trim();
+                            if (mainCmd) {
+                                finalDesc = mainCmd;
+                            } else {
+                                // If no main command found, use the full command with [name] replaced
+                                finalDesc = envCmd;
+                            }
+                        }
+                        
+                        selectedTasks.push({
+                            environment: envLabels[env],
+                            envOrder: env === 'dev' ? 1 : env === 'stg' ? 2 : 3, // For sorting
+                            phase: phaseTitle,
+                            phaseOrder: phaseNum, // For sorting
+                            title: finalTitle,
+                            desc: finalDesc
+                        });
+                    });
+                });
+            });
+
+            if (selectedTasks.length === 0) {
+                alert('No tasks selected. Please select tasks to export.');
+                return;
+            }
+
+            // Sort tasks by environment (dev, stg, prd) and then by phase
+            selectedTasks.sort((a, b) => {
+                if (a.envOrder !== b.envOrder) {
+                    return a.envOrder - b.envOrder;
+                }
+                // Sort by phase order
+                const phaseOrder = ['phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6'];
+                const aPhaseIndex = phaseOrder.indexOf(a.phaseOrder);
+                const bPhaseIndex = phaseOrder.indexOf(b.phaseOrder);
+                return aPhaseIndex - bPhaseIndex;
+            });
+
+            // Create CSV content with environment column
+            let csv = 'Environment,Phase,Task Title,Description\n';
+            selectedTasks.forEach(task => {
+                // Escape commas and quotes in CSV
+                const env = `"${task.environment.replace(/"/g, '""')}"`;
+                const phase = `"${task.phase.replace(/"/g, '""')}"`;
+                const title = `"${task.title.replace(/"/g, '""')}"`;
+                const desc = `"${task.desc.replace(/"/g, '""')}"`;
+                csv += `${env},${phase},${title},${desc}\n`;
+            });
+
+            // Create blob and download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `gcp-checklist-${baseName}-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Show success message
+            const exportBtn = document.querySelector('#previewModal .modal-footer .btn-secondary');
+            if (exportBtn && exportBtn.textContent.includes('Google Sheets')) {
+                const originalText = exportBtn.textContent;
+                exportBtn.textContent = '✅ Exported!';
+                setTimeout(() => {
+                    exportBtn.textContent = originalText;
+                }, 2000);
+            }
+        }
+
         // Initialize when DOM is ready
         const projectNameInput = document.getElementById('projectName');
         const dynamicProjects = document.querySelectorAll('.dynamic-project');
@@ -1254,15 +2032,27 @@
                 
                 taskCheckboxes.forEach(cb => {
                     cb.checked = this.checked;
+                    // Trigger change event to handle auto-check for Phase 1 -> Phase 2
+                    if (!isAutoChecking) {
+                        cb.dispatchEvent(new Event('change'));
+                    }
                 });
                 
                 updateProgress();
             });
         });
 
+        // Flag to prevent infinite loops during auto-check
+        let isAutoChecking = false;
+
         // Update select-all checkbox state when individual tasks are checked/unchecked
         checkboxes.forEach(cb => {
             cb.addEventListener('change', function() {
+                // Skip auto-check logic if we're already in an auto-check operation
+                if (isAutoChecking) {
+                    return;
+                }
+
                 const phaseSection = this.closest('.checklist-section');
                 if (phaseSection) {
                     const phase = phaseSection.dataset.phase;
@@ -1279,6 +2069,64 @@
                         selectAllCb.indeterminate = false;
                     } else {
                         selectAllCb.indeterminate = true;
+                    }
+                }
+
+                // Auto-check Phase 2 Service Account when Phase 1 Project Creation is checked
+                if (phaseSection && phaseSection.dataset.phase === 'phase1') {
+                    const taskTitle = this.closest('.task-item').querySelector('.task-title').textContent.trim().toLowerCase();
+                    let targetEnv = null;
+                    
+                    // Determine which environment was selected
+                    if (taskTitle.includes('development') || taskTitle.includes('dev')) {
+                        targetEnv = 'dev';
+                    } else if (taskTitle.includes('staging') || taskTitle.includes('stg')) {
+                        targetEnv = 'stg';
+                    } else if (taskTitle.includes('production') || taskTitle.includes('prd')) {
+                        targetEnv = 'prd';
+                    }
+
+                    // Find and check/uncheck dependent items (Service Accounts, VPC, Load Balancer)
+                    if (targetEnv) {
+                        isAutoChecking = true;
+
+                        // Helper to sync checkboxes in a given phase for the selected environment
+                        const syncPhaseEnvCheckboxes = (phaseId) => {
+                            const phaseSectionTarget = document.querySelector(`.checklist-section[data-phase="${phaseId}"]`);
+                            if (!phaseSectionTarget) return;
+
+                            const phaseCheckboxes = phaseSectionTarget.querySelectorAll('.task-checkbox');
+                            phaseCheckboxes.forEach(targetCb => {
+                                const titleText = targetCb.closest('.task-item')
+                                    .querySelector('.task-title')
+                                    .textContent.trim().toLowerCase();
+
+                                const envMatch =
+                                    (targetEnv === 'dev' && (titleText.includes('dev') && !titleText.includes('stg') && !titleText.includes('prd'))) ||
+                                    (targetEnv === 'stg' && (titleText.includes('stg') && !titleText.includes('dev') && !titleText.includes('prd'))) ||
+                                    (targetEnv === 'prd' && (titleText.includes('prd') && !titleText.includes('dev') && !titleText.includes('stg')));
+
+                                if (envMatch) {
+                                    targetCb.checked = this.checked;
+                                    const itemEl = targetCb.closest('.task-item');
+                                    if (targetCb.checked) {
+                                        itemEl.classList.add('completed');
+                                    } else {
+                                        itemEl.classList.remove('completed');
+                                    }
+                                }
+                            });
+                        };
+
+                        // Phase 2: Service Accounts
+                        syncPhaseEnvCheckboxes('phase2');
+                        // Phase 5: VPC Selection
+                        syncPhaseEnvCheckboxes('phase5');
+                        // Phase 6: Load Balancer Selection
+                        syncPhaseEnvCheckboxes('phase6');
+
+                        isAutoChecking = false;
+                        updateProgress();
                     }
                 }
             });
