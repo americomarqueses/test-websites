@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCP PostgreSQL Read Replica Guide</title>
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --text-color: #202124;
+            --bg-color: #ffffff;
+            --border-color: #dadce0;
+            --code-bg: #f8f9fa;
+        }
+
+        @media print {
+            .no-print { display: none; }
+            body { font-size: 11pt; line-height: 1.4; }
+            a { text-decoration: none; color: black; }
+            .container { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: none !important; }
+            pre { white-space: pre-wrap !important; border: 1px solid #ccc !important; }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background-color: #f1f3f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--bg-color);
+            width: 100%;
+            max-width: 800px;
+            padding: 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            border-radius: 8px;
+        }
+
+        h1 { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-top: 0; }
+        h2 { color: #3c4043; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-top: 30px; }
+        h3 { color: #5f6368; }
+
+        p, li { line-height: 1.6; }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 0.85em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th { background-color: #f8f9fa; font-weight: bold; }
+
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .print-button:hover { background-color: #1557b0; }
+    </style>
+</head>
+<body>
+
+    <button class="print-button no-print" onclick="window.print()">Print to PDF</button>
+
+    <div class="container">
+        <h1>PostgreSQL Read Replica Load Balancing on GCP</h1>
+        <p>This guide explains how to set up a dedicated <strong>Read-Only Load Balancer</strong> for your PostgreSQL replicas using <strong>pgpool-II</strong>. This architecture is ideal when your application logic already handles writes to the Master, and you only need a single, stable endpoint to balance and health-check your read-heavy traffic.</p>
+
+        <h2>1. Architectural Overview</h2>
+        <p>In this "Read-Only" mode, your API uses two separate connection strings:</p>
+        <ul>
+            <li><strong>Write Path (Manual):</strong> API connects directly to the Cloud SQL Primary.</li>
+            <li><strong>Read Path (Load Balanced):</strong> API connects to an Internal Load Balancer (ILB), which points to a cluster of pgpool-II instances that distribute queries across your replicas.</li>
+        </ul>
+
+        <h3>Components</h3>
+        <ol>
+            <li><strong>Cloud SQL Replicas:</strong> Multiple PostgreSQL read-only instances.</li>
+            <li><strong>pgpool-II Layer:</strong> A Managed Instance Group (MIG) of VMs configured for load balancing only.</li>
+            <li><strong>Internal Load Balancer (ILB):</strong> Provides a single IP (e.g., 10.128.0.100) for all read queries.</li>
+        </ol>
+
+        <h2>2. Infrastructure Configuration</h2>
+        
+        <h3>Step 1: Identify Replica IPs</h3>
+        <p>Ensure your read replicas are on the same VPC.</p>
+        <ul>
+            <li>Replica 1 IP: <code>10.128.0.6</code></li>
+            <li>Replica 2 IP: <code>10.128.0.7</code></li>
+            <li>Replica 3 IP: <code>10.128.0.8</code></li>
+        </ul>
+
+        <h3>Step 2: Configure pgpool-II for "Read-Only" Mode</h3>
+        <p>When creating your Compute Engine Instance Template, use the following specialized configuration. We set the Primary weight to 0 (or exclude it) so the proxy only targets replicas.</p>
+        
+        <p><strong>Startup Script (Debian/Ubuntu):</strong></p>
+<pre>#!/bin/bash
+apt-get update
+apt-get install -y pgpool2 postgresql-client
+
+# Configure pgpool for Read-Only Load Balancing
+cat &lt;&lt;EOF &gt; /etc/pgpool2/pgpool.conf
+listen_addresses = '*'
+port = 5432
+
+# Backend Replicas
+backend_hostname0 = '10.128.0.6'
+backend_port0 = 5432
+backend_weight0 = 1
+backend_flag0 = 'ALLOW_TO_FAILOVER'
+
+backend_hostname1 = '10.128.0.7'
+backend_port1 = 5432
+backend_weight1 = 1
+backend_flag1 = 'ALLOW_TO_FAILOVER'
+
+# Load Balancing Settings
+master_slave_mode = on
+master_slave_sub_mode = 'stream'
+load_balance_mode = on
+replication_mode = off
+
+# Health Check Settings (Crucial for Load Balancers)
+health_check_period = 10
+health_check_user = 'health_check_user'
+health_check_password = 'your_password'
+EOF
+
+systemctl restart pgpool2</pre>
+
+        <h3>Step 3: Deploy the Internal Load Balancer</h3>
+        <ol>
+            <li><strong>Instance Group:</strong> Create a Managed Instance Group from the template above.</li>
+            <li><strong>Health Check:</strong> Create a TCP health check for Port 5432.</li>
+            <li><strong>ILB Setup:</strong> Create an Internal TCP Load Balancer using the Instance Group as the backend.</li>
+            <li><strong>Result:</strong> Your API now connects to the <strong>ILB IP</strong> for all SELECT operations.</li>
+        </ol>
+
+        <h2>3. Why use pgpool-II for just Replicas?</h2>
+        <ol>
+            <li><strong>Seamless Scaling:</strong> Add or remove replicas in Cloud SQL and update the pgpool.conf without changing API code.</li>
+            <li><strong>Automatic Failover (Read-Path):</strong> If a replica goes down, pgpool-II detects it and stops sending queries to it.</li>
+            <li><strong>Connection Pooling:</strong> pgpool-II maintains a "warm" pool of connections, reducing latency.</li>
+        </ol>
+
+        <h2>4. Handling Consistency (Lag)</h2>
+        <p>Since you are managing writes manually, you must be aware of Replication Lag.</p>
+        <ul>
+            <li><strong>Solution A:</strong> Use pgpool's <code>delay_threshold</code> to automatically disable replicas that are too far behind.</li>
+            <li><strong>Solution B (Application Side):</strong> After a write, perform a "Critical Read" from the Master directly for 1–2 seconds.</li>
+        </ul>
+
+        <h2>5. Summary Checklist</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Setting</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Endpoint</strong></td>
+                    <td>Use the ILB IP for all Read connections</td>
+                </tr>
+                <tr>
+                    <td><strong>Algorithm</strong></td>
+                    <td>Round-robin distribution is default</td>
+                </tr>
+                <tr>
+                    <td><strong>Health Checks</strong></td>
+                    <td>Set health_check_period to ensure fast failover</td>
+                </tr>
+                <tr>
+                    <td><strong>Primary Node</strong></td>
+                    <td>Optional; can be omitted for replica-only traffic</td>
+                </tr>
+            </tbody>
+        </ol>
+    </div>
+</body>
+</html>
