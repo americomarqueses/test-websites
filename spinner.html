@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin The Wheel</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom styles for animations not in standard Tailwind CDN */
+        .animate-in { animation: fadeIn 0.2s ease-out forwards; }
+        .zoom-in-95 { animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col items-center overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="w-full bg-white shadow-sm py-4 px-6 flex justify-between items-center z-10">
+        <div class="flex items-center gap-2 text-indigo-600">
+            <i data-lucide="rotate-cw" id="header-icon"></i>
+            <h1 class="text-xl font-bold tracking-tight">Spin & Rank</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <button 
+                id="toggle-sound-btn"
+                class="p-2 rounded-full transition-colors bg-indigo-100 text-indigo-600"
+                title="Toggle Sound"
+            >
+                <i data-lucide="volume-2" id="sound-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-6xl p-4 md:p-8 flex flex-col md:flex-row gap-8">
+        
+        <!-- Left Column - The Wheel -->
+        <section class="flex-1 flex flex-col items-center justify-start pt-8">
+            <div class="relative w-full max-w-[400px] aspect-square">
+                <!-- Pointer (12 o'clock) -->
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-20 text-slate-800 drop-shadow-md">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="rotate-180">
+                        <path d="M12 2L22 20H2L12 2Z" />
+                    </svg>
+                </div>
+
+                <!-- SVG Wheel Container -->
+                <div 
+                    id="wheel-wrapper"
+                    class="w-full h-full rounded-full shadow-2xl overflow-hidden border-4 border-white bg-slate-200 relative transition-transform duration-300 ease-out"
+                    style="transform: rotate(-90deg);"
+                >
+                    <div id="wheel-svg" class="w-full h-full"></div>
+                </div>
+                
+                <!-- Center dot -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-md border-4 border-slate-100 z-10"></div>
+            </div>
+
+            <button
+                id="spin-btn"
+                class="mt-10 px-12 py-4 rounded-full font-bold text-xl shadow-lg transition-all flex items-center gap-3 bg-indigo-600 text-white hover:bg-indigo-700 hover:scale-105 active:scale-95"
+            >
+                <i data-lucide="play" class="fill-current"></i>
+                <span id="spin-btn-text">SPIN</span>
+            </button>
+        </section>
+
+        <!-- Right Column - Config & Rankings -->
+        <section class="flex-1 flex flex-col gap-6 w-full max-w-md mx-auto h-[80vh]">
+            
+            <!-- Settings Box -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex-shrink-0">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="settings" class="text-slate-400 w-5 h-5"></i> Options
+                </h2>
+                <label class="flex items-center gap-3 cursor-pointer group">
+                    <div class="relative">
+                        <input 
+                            type="checkbox" 
+                            id="remove-on-win-checkbox"
+                            class="sr-only" 
+                            checked
+                        />
+                        <div id="remove-on-win-bg" class="block w-10 h-6 rounded-full transition-colors bg-indigo-500"></div>
+                        <div id="remove-on-win-dot" class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform translate-x-4"></div>
+                    </div>
+                    <div class="text-sm font-medium text-slate-700 select-none">
+                        Remove winner from wheel (Ranking Mode)
+                    </div>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-0">
+                <!-- Input Items List -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col min-h-0">
+                    <h2 class="text-lg font-bold mb-4 flex items-center justify-between">
+                        <span id="contestant-count-header">Who are we sending? (5)</span>
+                    </h2>
+                    
+                    <form id="add-item-form" class="flex gap-2 mb-4">
+                        <input
+                            type="text"
+                            id="new-item-input"
+                            placeholder="Add a name..."
+                            class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"
+                        />
+                        <button 
+                            type="submit" 
+                            id="add-item-btn"
+                            disabled
+                            class="p-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 disabled:opacity-50 disabled:hover:bg-indigo-100 transition-colors"
+                        >
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                        </button>
+                    </form>
+
+                    <div id="contestants-list" class="flex-1 overflow-y-auto pr-2 space-y-2">
+                        <!-- Contestants injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Rankings List -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col min-h-0">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold flex items-center gap-2 text-amber-600">
+                            <i data-lucide="trophy" class="w-5 h-5"></i> Rankings
+                        </h2>
+                        <button 
+                            id="open-reset-btn"
+                            class="hidden text-xs font-semibold text-slate-500 hover:text-red-600 flex items-center gap-1 transition-colors"
+                        >
+                            <i data-lucide="refresh-ccw" class="w-3 h-3"></i> Reset
+                        </button>
+                    </div>
+
+                    <div id="rankings-list" class="flex-1 overflow-y-auto pr-2 space-y-3">
+                        <!-- Rankings injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Winner Modal -->
+    <div id="winner-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center flex flex-col items-center animate-in zoom-in-95">
+            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-6 text-amber-500">
+                <i data-lucide="trophy" class="w-10 h-10"></i>
+            </div>
+            
+            <h3 id="winner-rank-text" class="text-sm font-bold tracking-widest text-slate-400 uppercase mb-2">
+                1st Place
+            </h3>
+            
+            <p id="winner-name-text" class="text-3xl font-extrabold text-slate-800 mb-8 break-words w-full">
+                Winner Name
+            </p>
+            
+            <button
+                id="confirm-winner-btn"
+                class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all"
+            >
+                Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center flex flex-col items-center animate-in zoom-in-95">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 text-red-500">
+                <i data-lucide="refresh-ccw" class="w-8 h-8"></i>
+            </div>
+            
+            <h3 class="text-xl font-bold text-slate-800 mb-2">
+                Reset Everything?
+            </h3>
+            
+            <p class="text-slate-500 mb-8">
+                This will clear the rankings and restore the default contestants.
+            </p>
+            
+            <div class="flex gap-4 w-full">
+                <button
+                    id="cancel-reset-btn"
+                    class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold shadow-sm hover:bg-slate-200 active:scale-95 transition-all"
+                >
+                    Cancel
+                </button>
+                <button
+                    id="confirm-reset-btn"
+                    class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold shadow-lg shadow-red-200 hover:bg-red-700 active:scale-95 transition-all"
+                >
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data & State
+        const COLORS = [
+            '#FF595E', '#FFCA3A', '#8AC926', '#1982C4', '#6A4C93',
+            '#F46036', '#2E294E', '#1B998B', '#E71D36', '#C5D86D',
+            '#D90368', '#00CC66', '#4C5C68', '#FF9F1C', '#9D4EDD'
+        ];
+
+        const DEFAULT_ITEMS = [
+            { id: '1', text: 'Alice' },
+            { id: '2', text: 'Bob' },
+            { id: '3', text: 'Charlie' },
+            { id: '4', text: 'Dave' },
+            { id: '5', text: 'Eve' }
+        ].map((item, index) => ({ ...item, color: COLORS[index % COLORS.length] }));
+
+        let items = [...DEFAULT_ITEMS];
+        let rankings = [];
+        
+        let isSpinning = false;
+        let currentAngle = 0;
+        let winner = null;
+        
+        let removeOnWin = true;
+        let soundEnabled = true;
+
+        let reqRef = null;
+        let audioCtx = null;
+
+        // DOM Elements
+        const wheelWrapper = document.getElementById('wheel-wrapper');
+        const wheelSvgContainer = document.getElementById('wheel-svg');
+        const spinBtn = document.getElementById('spin-btn');
+        const spinBtnText = document.getElementById('spin-btn-text');
+        const headerIcon = document.getElementById('header-icon');
+        
+        const contestantCountHeader = document.getElementById('contestant-count-header');
+        const contestantsList = document.getElementById('contestants-list');
+        const rankingsList = document.getElementById('rankings-list');
+        
+        const addItemForm = document.getElementById('add-item-form');
+        const newItemInput = document.getElementById('new-item-input');
+        const addItemBtn = document.getElementById('add-item-btn');
+        
+        const toggleSoundBtn = document.getElementById('toggle-sound-btn');
+        const soundIcon = document.getElementById('sound-icon');
+        
+        const removeOnWinCheckbox = document.getElementById('remove-on-win-checkbox');
+        const removeOnWinBg = document.getElementById('remove-on-win-bg');
+        const removeOnWinDot = document.getElementById('remove-on-win-dot');
+        
+        const openResetBtn = document.getElementById('open-reset-btn');
+        const resetModal = document.getElementById('reset-modal');
+        const cancelResetBtn = document.getElementById('cancel-reset-btn');
+        const confirmResetBtn = document.getElementById('confirm-reset-btn');
+        
+        const winnerModal = document.getElementById('winner-modal');
+        const winnerRankText = document.getElementById('winner-rank-text');
+        const winnerNameText = document.getElementById('winner-name-text');
+        const confirmWinnerBtn = document.getElementById('confirm-winner-btn');
+
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Audio System
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playTick() {
+            if (!soundEnabled) return;
+            const ctx = initAudio();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.05);
+        }
+
+        function playWin() {
+            if (!soundEnabled) return;
+            const ctx = initAudio();
+            const freqs = [300, 400, 500]; // Major chord simulation
+            freqs.forEach(freq => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'triangle';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 1.5);
+            });
+        }
+
+        // Render Functions
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function renderWheel() {
+            if (items.length === 0) {
+                wheelSvgContainer.innerHTML = '<div class="w-full h-full flex items-center justify-center text-slate-400 font-medium">Add items to spin</div>';
+                return;
+            }
+
+            if (items.length === 1) {
+                const safeText = escapeHTML(items[0].text);
+                wheelSvgContainer.innerHTML = `
+                    <svg viewBox="0 0 500 500" class="w-full h-full drop-shadow-sm">
+                        <g>
+                            <circle cx="250" cy="250" r="250" fill="${items[0].color}" />
+                            <text x="250" y="250" fill="white" font-size="40" font-weight="bold" text-anchor="middle" dominant-baseline="middle">
+                                ${safeText}
+                            </text>
+                        </g>
+                    </svg>
+                `;
+                return;
+            }
+
+            let svgMarkup = `<svg viewBox="0 0 500 500" class="w-full h-full drop-shadow-sm">`;
+            const sliceAngle = 360 / items.length;
+
+            items.forEach((item, index) => {
+                const startAngle = index * sliceAngle;
+                const endAngle = (index + 1) * sliceAngle;
+                
+                const startRad = (startAngle * Math.PI) / 180;
+                const endRad = (endAngle * Math.PI) / 180;
+                
+                const x1 = 250 + 250 * Math.cos(startRad);
+                const y1 = 250 + 250 * Math.sin(startRad);
+                const x2 = 250 + 250 * Math.cos(endRad);
+                const y2 = 250 + 250 * Math.sin(endRad);
+                
+                const largeArcFlag = sliceAngle > 180 ? 1 : 0;
+                const pathData = `M 250 250 L ${x1} ${y1} A 250 250 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+                const textAngle = startAngle + sliceAngle / 2;
+                const textRad = (textAngle * Math.PI) / 180;
+                const textX = 250 + 160 * Math.cos(textRad);
+                const textY = 250 + 160 * Math.sin(textRad);
+
+                let displayTxt = item.text;
+                if (displayTxt.length > 15) displayTxt = displayTxt.substring(0, 12) + '...';
+                displayTxt = escapeHTML(displayTxt);
+
+                const fontSize = items.length > 15 ? "16" : items.length > 8 ? "24" : "32";
+
+                svgMarkup += `
+                    <g>
+                        <path d="${pathData}" fill="${item.color}" stroke="white" stroke-width="2" />
+                        <text 
+                            x="${textX}" 
+                            y="${textY}" 
+                            fill="white" 
+                            font-size="${fontSize}" 
+                            font-weight="bold" 
+                            text-anchor="middle" 
+                            dominant-baseline="middle"
+                            transform="rotate(${textAngle}, ${textX}, ${textY})"
+                            style="text-shadow: 1px 1px 4px rgba(0,0,0,0.4)"
+                        >${displayTxt}</text>
+                    </g>
+                `;
+            });
+
+            svgMarkup += `</svg>`;
+            wheelSvgContainer.innerHTML = svgMarkup;
+        }
+
+        function renderContestants() {
+            contestantCountHeader.textContent = `Who are we sending? (${items.length})`;
+            
+            if (items.length === 0) {
+                contestantsList.innerHTML = `<p class="text-sm text-slate-400 italic text-center py-4">No contestants on wheel.</p>`;
+                return;
+            }
+
+            contestantsList.innerHTML = items.map(item => `
+                <div class="flex items-center justify-between bg-slate-50 p-2 pl-3 rounded-lg border border-slate-100">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${item.color}"></span>
+                        <span class="text-sm font-medium truncate" title="${escapeHTML(item.text)}">${escapeHTML(item.text)}</span>
+                    </div>
+                    <button 
+                        onclick="removeItem('${item.id}')"
+                        ${isSpinning ? 'disabled' : ''}
+                        class="text-slate-400 hover:text-red-500 p-1 disabled:opacity-50 transition-colors"
+                    >
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function renderRankings() {
+            if (rankings.length === 0) {
+                rankingsList.innerHTML = `<p class="text-sm text-slate-400 italic text-center py-4">Spin the wheel to rank contestants!</p>`;
+                openResetBtn.classList.add('hidden');
+                return;
+            }
+
+            openResetBtn.classList.remove('hidden');
+            rankingsList.innerHTML = rankings.map((rankedItem, index) => `
+                <div class="flex items-center gap-3 p-3 bg-gradient-to-r from-amber-50 to-white border border-amber-100 rounded-xl">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-700 font-bold text-sm">
+                        ${index + 1}
+                    </div>
+                    <span class="font-semibold text-slate-800 break-words flex-1">
+                        ${escapeHTML(rankedItem.text)}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function updateUIState() {
+            // Spin Button
+            const canSpin = items.length > 0 && !isSpinning;
+            spinBtn.disabled = !canSpin;
+            
+            if (isSpinning) {
+                spinBtn.className = "mt-10 px-12 py-4 rounded-full font-bold text-xl shadow-lg transition-all flex items-center gap-3 bg-slate-300 text-slate-500 cursor-not-allowed";
+                spinBtnText.textContent = "SPINNING...";
+                headerIcon.classList.add('animate-spin');
+                wheelWrapper.style.transition = 'none';
+            } else {
+                spinBtn.className = `mt-10 px-12 py-4 rounded-full font-bold text-xl shadow-lg transition-all flex items-center gap-3 ${items.length === 0 ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:scale-105 active:scale-95'}`;
+                spinBtnText.textContent = "SPIN";
+                headerIcon.classList.remove('animate-spin');
+                wheelWrapper.style.transition = 'transform 0.3s ease-out';
+            }
+
+            // Inputs
+            newItemInput.disabled = isSpinning;
+            addItemBtn.disabled = isSpinning || !newItemInput.value.trim();
+            removeOnWinCheckbox.disabled = isSpinning;
+            openResetBtn.disabled = isSpinning;
+
+            // Update rotation
+            wheelWrapper.style.transform = `rotate(${currentAngle - 90}deg)`;
+        }
+
+        function fullRender() {
+            renderWheel();
+            renderContestants();
+            renderRankings();
+            updateUIState();
+        }
+
+        // Logic Functions
+        function getOrdinalSuffix(i) {
+            const j = i % 10, k = i % 100;
+            if (j === 1 && k !== 11) return i + "st";
+            if (j === 2 && k !== 12) return i + "nd";
+            if (j === 3 && k !== 13) return i + "rd";
+            return i + "th";
+        }
+
+        window.removeItem = function(id) {
+            if (isSpinning) return;
+            items = items.filter(item => item.id !== id);
+            
+            // Recoloring
+            items = items.map((item, idx) => ({ ...item, color: COLORS[idx % COLORS.length] }));
+            fullRender();
+        };
+
+        function addItem(e) {
+            e.preventDefault();
+            const text = newItemInput.value.trim();
+            if (!text || isSpinning) return;
+            
+            items.push({
+                id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+                text: text,
+                color: COLORS[items.length % COLORS.length]
+            });
+            
+            newItemInput.value = '';
+            fullRender();
+        }
+
+        function spin() {
+            if (items.length === 0 || isSpinning) return;
+            
+            initAudio();
+            isSpinning = true;
+            winner = null;
+            fullRender();
+
+            const duration = 5000 + Math.random() * 2000; // 5-7 seconds
+            const startAngle = currentAngle;
+            const extraSpins = 360 * (5 + Math.floor(Math.random() * 5)); 
+            const randomStopOffset = Math.random() * 360; 
+            const targetAngle = startAngle + extraSpins + randomStopOffset;
+
+            const startTime = performance.now();
+            const sliceAngle = 360 / items.length;
+            
+            let lastSliceIndex = Math.floor(((360 - (startAngle % 360)) % 360) / sliceAngle);
+
+            function animate(time) {
+                const elapsed = time - startTime;
+                
+                if (elapsed >= duration) {
+                    currentAngle = targetAngle;
+                    isSpinning = false;
+                    finishSpin(targetAngle);
+                    return;
+                }
+
+                const t = elapsed / duration;
+                // easeOutQuart
+                const ease = 1 - Math.pow(1 - t, 4);
+                currentAngle = startAngle + (targetAngle - startAngle) * ease;
+                
+                // Direct DOM update for performance during animation
+                wheelWrapper.style.transform = `rotate(${currentAngle - 90}deg)`;
+
+                // Audio tick
+                const normalized = (360 - (currentAngle % 360)) % 360;
+                const currentSliceIndex = Math.floor(normalized / (360 / items.length));
+                if (currentSliceIndex !== lastSliceIndex) {
+                    playTick();
+                    lastSliceIndex = currentSliceIndex;
+                }
+
+                reqRef = requestAnimationFrame(animate);
+            }
+
+            reqRef = requestAnimationFrame(animate);
+        }
+
+        function finishSpin(finalAngle) {
+            if (items.length === 0) return;
+            
+            updateUIState(); // reset visual state
+            
+            const normalized = (360 - (finalAngle % 360)) % 360;
+            const winningIndex = Math.floor(normalized / (360 / items.length));
+            
+            winner = items[winningIndex];
+            playWin();
+            
+            // Show winner modal
+            winnerRankText.textContent = `${getOrdinalSuffix(rankings.length + 1)} Place`;
+            winnerNameText.textContent = winner.text;
+            winnerModal.classList.remove('hidden');
+        }
+
+        function confirmWinner() {
+            if (!winner) return;
+            
+            rankings.push(winner);
+            
+            if (removeOnWin) {
+                items = items.filter(item => item.id !== winner.id);
+                // Recolor
+                items = items.map((item, idx) => ({ ...item, color: COLORS[idx % COLORS.length] }));
+            }
+            
+            winner = null;
+            winnerModal.classList.add('hidden');
+            fullRender();
+        }
+
+        function resetAll() {
+            items = [...DEFAULT_ITEMS];
+            rankings = [];
+            currentAngle = 0;
+            winner = null;
+            resetModal.classList.add('hidden');
+            fullRender();
+        }
+
+        // Event Listeners
+        addItemForm.addEventListener('submit', addItem);
+        
+        newItemInput.addEventListener('input', () => {
+            addItemBtn.disabled = isSpinning || !newItemInput.value.trim();
+        });
+
+        spinBtn.addEventListener('click', spin);
+        
+        toggleSoundBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            if (soundEnabled) {
+                toggleSoundBtn.className = "p-2 rounded-full transition-colors bg-indigo-100 text-indigo-600";
+                soundIcon.setAttribute('data-lucide', 'volume-2');
+            } else {
+                toggleSoundBtn.className = "p-2 rounded-full transition-colors bg-slate-100 text-slate-400";
+                soundIcon.setAttribute('data-lucide', 'volume-x');
+            }
+            lucide.createIcons();
+        });
+
+        removeOnWinCheckbox.addEventListener('change', (e) => {
+            removeOnWin = e.target.checked;
+            if (removeOnWin) {
+                removeOnWinBg.classList.replace('bg-slate-300', 'bg-indigo-500');
+                removeOnWinDot.classList.add('translate-x-4');
+            } else {
+                removeOnWinBg.classList.replace('bg-indigo-500', 'bg-slate-300');
+                removeOnWinDot.classList.remove('translate-x-4');
+            }
+        });
+
+        confirmWinnerBtn.addEventListener('click', confirmWinner);
+        
+        openResetBtn.addEventListener('click', () => resetModal.classList.remove('hidden'));
+        cancelResetBtn.addEventListener('click', () => resetModal.classList.add('hidden'));
+        confirmResetBtn.addEventListener('click', resetAll);
+
+        // Initial render
+        fullRender();
+    </script>
+</body>
+</html>
